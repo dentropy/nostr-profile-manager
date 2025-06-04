@@ -6,15 +6,25 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "lint": "npx tslint --fix 'app/**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.1",
+    "@mui/material": "^7.1.1",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
+    "@rx-nostr/crypto": "^0.0.0",
+    "bip39": "^3.1.0",
     "isbot": "^5.1.27",
+    "jotai": "^2.12.5",
+    "nostr-tools": "^2.13.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.5.3"
+    "react-router": "^7.5.3",
+    "rx-nostr": "^3.6.1"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.3",
@@ -22,9 +32,16 @@
     "@types/node": "^20",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "prettier": "^2.8.8",
     "tailwindcss": "^4.1.4",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "tslint-react": "^4.1.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
+    "vite-plugin-commonjs": "^0.10.4",
+    "vite-plugin-node-polyfills": "^0.23.0",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }
