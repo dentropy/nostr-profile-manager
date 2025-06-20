@@ -1,9 +1,9 @@
 import { useAtom } from "jotai";
 import { appPageAtom } from "~/jotaiAtoms";
 
-import AddNostrAccount from "./addNostrAccount";
-import EditNostrProfile from "./editProfile";
-import NostrProfiles from "./nostrProfiles";
+import AddNostrAccount from "./components/addNostrAccount";
+import EditNostrProfile from "./components/editProfile";
+import NostrProfiles from "./pages/nostrProfiles";
 
 export default function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);

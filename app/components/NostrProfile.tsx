@@ -30,13 +30,12 @@ export default function NostrProfile(props: any) {
     setEditPubkey(props.profile.id);
   }
   return (
-    <Card sx={{ width: "80%", margin: "50px", justifyContent: "center" }}>
+    <Card sx={{ width: "80%", margin: "50px" }}>
       <CardContent>
         <Typography variant="body1">
-          pubkey: <br />
+          pubkey: <br></br>
           {props.profile.pubkey}
         </Typography>
-        <br />
         <Typography variant="body1">
           from: {JSON.stringify(props.profile.from)}
         </Typography>

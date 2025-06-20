@@ -12,8 +12,8 @@ import { profileEvents } from "~/jotaiAtoms";
 import { accountsAtom } from "~/jotaiAtoms";
 import { appPageAtom } from "~/jotaiAtoms";
 
-import NostrAppBar from "./NostrAppBar";
-import PageSelect from "./pageSelect";
+import NostrAppBar from "../components/NostrAppBar";
+import PageSelect from "../pageSelect";
 
 export function Welcome() {
   const [accounts, setAccounts] = useAtom(accountsAtom);

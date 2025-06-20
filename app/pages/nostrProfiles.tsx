@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { profileEvents } from "~/jotaiAtoms";
-import NostrProfile from "./NostrProfile";
+import NostrProfile from "../components/NostrProfile";
 export default function NostrProfiles() {
   const [profileData, setProfileData] = useAtom(profileEvents);
   const hasItems = Object.keys(profileData).length > 0;

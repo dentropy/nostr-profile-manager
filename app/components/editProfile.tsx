@@ -11,6 +11,7 @@ import { editProfileEventId, accountsAtom, profileEvents, wsPublish } from "~/jo
 import { generateSecretKey, getPublicKey, finalizeEvent, verifyEvent, nip19 } from 'nostr-tools'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
 
+
 const style = {
     color: "black",
     position: "absolute",
