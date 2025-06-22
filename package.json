@@ -25,6 +25,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router": "^7.5.3",
+    "react-syntax-highlighter": "^15.6.1",
     "rx-nostr": "^3.6.1",
     "uuid": "^11.1.0"
   },

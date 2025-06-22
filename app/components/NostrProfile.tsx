@@ -10,6 +10,9 @@ import { useAtom } from "jotai";
 import { editProfileEventId } from "~/jotaiAtoms";
 import { appPageAtom } from "~/jotaiAtoms";
 
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
 const special_keys = [
   "nip05",
   "name",
@@ -30,80 +33,26 @@ export default function NostrProfile(props: any) {
     setEditPubkey(props.profile.id);
   }
   return (
-    <Card sx={{ width: "80%", margin: "50px" }}>
-      <CardContent>
-        <Typography variant="body1">
-          pubkey: <br></br>
-          {props.profile.pubkey}
-        </Typography>
-        <Typography variant="body1">
-          id: <br />
-          {"id" in props.profile
-            ? props.profile.id
-            : "Not provided"}
-        </Typography>
-        <Typography variant="body1">
-          from: {JSON.stringify(props.profile.from)}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          name:{" "}
-          {"name" in props.profile.json_content
-            ? props.profile.json_content.name
-            : "Not provided"}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          displayName:{" "}
-          {"displayName" in props.profile.json_content
-            ? props.profile.json_content.displayName
-            : "Not provided"}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          picture: <br />
-          {"picture" in props.profile.json_content
-            ? props.profile.json_content.picture
-            : "Not provided"}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          banner: <br />
-          {"banner" in props.profile.json_content
-            ? props.profile.json_content.banner
-            : "Not provided"}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          about: <br />
-          {"about" in props.profile.json_content
-            ? props.profile.json_content.about
-            : "Not provided"}
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          website: <br />
-          {"website" in props.profile.json_content
-            ? props.profile.json_content.website
-            : "Not provided"}
-        </Typography>
-        <br />
-        <p>TODO display all special key value pairs</p>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Rebroadcast Everywhere</Button>
-      </CardActions>
-      <CardActions>
-        <Button size="small">Rebroadcast To Specific Relays</Button>
-      </CardActions>
-      <CardActions>
-        <Button
-          size="small"
-          onClick={editProfile}
-        >
-          Edit Profile
-        </Button>
-      </CardActions>
-    </Card>
+    <>
+      <Card sx={{ width: "80%", margin: "50px" }}>
+      <SyntaxHighlighter language="json" style={docco}>
+        {JSON.stringify(props.profile, null, 2)}
+      </SyntaxHighlighter>
+        <CardActions>
+          <Button size="small">Rebroadcast Everywhere</Button>
+        </CardActions>
+        <CardActions>
+          <Button size="small">Rebroadcast To Specific Relays</Button>
+        </CardActions>
+        <CardActions>
+          <Button
+            size="small"
+            onClick={editProfile}
+          >
+            Edit Profile
+          </Button>
+        </CardActions>
+      </Card>
+    </>
   );
 }
