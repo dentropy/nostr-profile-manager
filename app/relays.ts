@@ -5,5 +5,6 @@ export const DEFAULT_USERMETA_RELAYS = [
   "wss://relay.damus.io",
   "wss://nos.lol",
   "wss://relay.primal.net",
+  "wss://t.mememap.net"
   // "wss://relay.mememaps.net",
 ];

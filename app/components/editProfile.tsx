@@ -3,10 +3,11 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useAtom } from "jotai";
 import { alignProperty } from "node_modules/@mui/material/esm/styles/cssUtils";
 import React from "react";
-import { editProfileEventId, accountsAtom, profileEvents, wsPublish } from "~/jotaiAtoms";
+
+import { useAtom } from "jotai";
+import { editProfileEventId, accountsAtom, profileEvents } from "~/jotaiAtoms";
 
 import { generateSecretKey, getPublicKey, finalizeEvent, verifyEvent, nip19 } from 'nostr-tools'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
@@ -24,11 +25,11 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-import { createRxNostr } from "rx-nostr";
-import { seckeySigner } from "@rx-nostr/crypto";
-
+import { verifier, seckeySigner } from "@rx-nostr/crypto";
 import { ToggleRelayList } from "./selectRelays";
 import { relayListAtom, selectedRelayListAtom, relayWebSocketsAtom } from "~/jotaiAtoms";
+
+import { rxNostr } from "~/pages/index"
 export default function EditNostrProfile() {
     const [editEventId, setEventId] = useAtom(editProfileEventId)
     const [profiles, setProfiles] = useAtom(profileEvents)
@@ -54,28 +55,18 @@ export default function EditNostrProfile() {
     const [profileJsonData, setProfileJsonData] = React.useState(project_content);
 
     async function publishEvents() {
-        let content = JSON.stringify(profileJsonData)
-        let sk0: any = nip19.decode(accounts[0].nsec).data
-        let new_event = await finalizeEvent({
-            kind: 0,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [],
-            content: content,
-        }, sk0)
-        for (const relay of selectedRelays) {
-            console.log(relay)
-            relayWebSockets[relay].send(
-                JSON.stringify([
-                "EVENT",
-                new_event,
-                ])
-            )
-            let tmpSocket = new WebSocket(relay)
-            tmpSocket.send(JSON.stringify([
-                "EVENT",
-                new_event,
-            ]))
-        }
+        let result = rxNostr.send(
+            {
+                kind: 0,
+                content: JSON.stringify(profileJsonData),
+            },
+            {
+                relays: selectedRelays,
+                signer: seckeySigner(accounts[0].nsec)
+            }
+        )
+        console.log("publishEvents")
+        console.log(result)
     }
     return (
         <>

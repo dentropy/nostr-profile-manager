@@ -32,17 +32,22 @@ export default function NostrProfile(props: any) {
     setAppPage({ page: "Edit Profile" });
     setEditPubkey(props.profile.id);
   }
+  function rebroadcastProfile() {
+    setAppPage({ page: "Rebroadcast Profile" });
+    setEditPubkey(props.profile.id);
+  }
   return (
     <>
       <Card sx={{ width: "80%", margin: "50px" }}>
-      <SyntaxHighlighter language="json" style={docco}>
-        {JSON.stringify(props.profile, null, 2)}
-      </SyntaxHighlighter>
+        <SyntaxHighlighter language="json" style={docco}>
+          {JSON.stringify(props.profile, null, 2)}
+        </SyntaxHighlighter>
         <CardActions>
-          <Button size="small">Rebroadcast Everywhere</Button>
-        </CardActions>
-        <CardActions>
-          <Button size="small">Rebroadcast To Specific Relays</Button>
+          <Button
+            size="small"
+            onClick={rebroadcastProfile}>
+            Rebroadcast This Profile
+          </Button>
         </CardActions>
         <CardActions>
           <Button

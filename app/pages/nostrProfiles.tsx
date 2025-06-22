@@ -9,7 +9,7 @@ export default function NostrProfiles() {
       {hasItems ? (
         <>
           {Object.entries(profileData).map(([key, value]) => (
-            <NostrProfile profile={profileData[key]} />
+            <NostrProfile profile={profileData[key].ui_data} />
           ))}
         </>
       ) : (

@@ -3,10 +3,9 @@ import * as React from "react";
 import { verifier } from "@rx-nostr/crypto";
 import { createRxForwardReq, createRxNostr } from "rx-nostr";
 import { DEFAULT_USERMETA_RELAYS } from "~/relays";
-const rxNostr = createRxNostr({ verifier });
-rxNostr.setDefaultRelays(DEFAULT_USERMETA_RELAYS);
 export const rxReq = createRxForwardReq();
-
+export const rxNostr = createRxNostr({ verifier });
+rxNostr.setDefaultRelays(DEFAULT_USERMETA_RELAYS);
 import { useAtom } from "jotai";
 import { profileEvents } from "~/jotaiAtoms";
 import { accountsAtom } from "~/jotaiAtoms";
@@ -24,16 +23,19 @@ export function Welcome() {
     // This is your application!
     const relay_data: any = profileData;
     if (packet.event.id in relay_data) {
-      if (!relay_data[packet.event.id].from.includes(packet.from)) {
-        relay_data[packet.event.id].from.push(packet.from);
+      if (!relay_data[packet.event.id].ui_data.from.includes(packet.from)) {
+        relay_data[packet.event.id].ui_data.from.push(packet.from);
       }
     } else {
       relay_data[packet.event.id] = {
-        from: [packet.from],
-        id: packet.event.id,
-        json_content: JSON.parse(packet.event.content),
-        created_at: packet.event.created_at,
-        pubkey: packet.event.pubkey,
+        ui_data: {
+          from: [packet.from],
+          id: packet.event.id,
+          json_content: JSON.parse(packet.event.content),
+          created_at: packet.event.created_at,
+          pubkey: packet.event.pubkey,
+        },
+        raw_event: packet.event
       };
     }
     // console.log("relay_data")
