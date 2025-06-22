@@ -37,6 +37,12 @@ export default function NostrProfile(props: any) {
           {props.profile.pubkey}
         </Typography>
         <Typography variant="body1">
+          id: <br />
+          {"id" in props.profile
+            ? props.profile.id
+            : "Not provided"}
+        </Typography>
+        <Typography variant="body1">
           from: {JSON.stringify(props.profile.from)}
         </Typography>
         <br />
