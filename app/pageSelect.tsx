@@ -5,6 +5,7 @@ import AddNostrAccount from "./components/addNostrAccount";
 import EditNostrProfile from "./components/editProfile";
 import NostrProfiles from "./pages/nostrProfiles";
 import { RebroadcastPage } from "./pages/rebroadcastPage";
+import { RelayPage } from "./pages/RelayPage";
 export default function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
   if (appPage.page == "Add Account") {
@@ -33,6 +34,13 @@ export default function PageSelect() {
     return (
       <>
         <RebroadcastPage />
+      </>
+    );
+  }
+  if (appPage.page == "Relay Select") {
+    return (
+      <>
+        <RelayPage />
       </>
     );
   }

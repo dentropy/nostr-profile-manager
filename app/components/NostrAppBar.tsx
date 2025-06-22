@@ -46,6 +46,12 @@ export default function NostrAppBar() {
     setAnchorElNav(null);
   };
 
+  const goToRelaysPage = () => {
+    setAppPage({ page: "Relay Select" });
+    setAnchorElNav(null);
+  };
+
+
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -147,6 +153,13 @@ export default function NostrAppBar() {
               sx={{ my: 2, color: "white", display: "block" }}
             >
               {"Profiles"}
+            </Button>
+            <Button
+              key={"Profiles"}
+              onClick={goToRelaysPage}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              {"Relays"}
             </Button>
           </Box>
           <Box sx={{ flexGrow: 0 }}>

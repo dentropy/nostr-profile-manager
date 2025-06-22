@@ -13,6 +13,9 @@ import { appPageAtom } from "~/jotaiAtoms";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
+
+import { JsonEditor } from 'json-edit-react'
+
 const special_keys = [
   "nip05",
   "name",
