@@ -5,23 +5,36 @@ export const accountsAtom = atom([]);
 export const appPageAtom = atom({ page: "Add Account" });
 
 export const profileEvents = atom({});
-export const editProfileEventId = atom(undefined);
+export const editProfileEventId = atom();
 
 import { DEFAULT_USERMETA_RELAYS } from "./relays";
-export const relayListAtom = atom(DEFAULT_USERMETA_RELAYS)
-export const selectedRelayListAtom = atom(DEFAULT_USERMETA_RELAYS)
+export const relayListAtom = atom(DEFAULT_USERMETA_RELAYS);
+export const selectedRelayListAtom = atom(DEFAULT_USERMETA_RELAYS);
 
-let relays_list:any = {}
-for (const relay of DEFAULT_USERMETA_RELAYS){
-    relays_list[relay] = {enabled: true}
+let relays_list: any = {};
+for (const relay of DEFAULT_USERMETA_RELAYS) {
+    relays_list[relay] = { enabled: true };
 }
 export const NIP33Data = atom({
-    events : {},
-    relay_list : relays_list,
-    enabled_relays: DEFAULT_USERMETA_RELAYS
-})
+    events: {},
+    relay_list: relays_list,
+    enabled_relays: DEFAULT_USERMETA_RELAYS,
+});
 
+export const ProfileJsonData = atom({
+    events: {},
+    relay_list: relays_list,
+    enabled_relays: DEFAULT_USERMETA_RELAYS,
+});
 
+export const EditProfileJson = atom({
+    "name": "",
+    "display_name": "",
+    "nip05": "",
+    "about": "",
+    "picture": "",
+    "banner": "",
+    "website": "",
+});
 
-
-export const relayWebSocketsAtom = atom({})
+export const relayWebSocketsAtom = atom({});

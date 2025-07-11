@@ -9,10 +9,11 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import { JsonEditor } from 'json-edit-react'
-import { rxReq } from "~/pages/index"
-import { verifier } from "@rx-nostr/crypto";
-import { createRxForwardReq, createRxNostr } from "rx-nostr";
-export const rxNostr = createRxNostr({ verifier });
+
+// import { rxReq } from "~/pages/index"
+// import { verifier } from "@rx-nostr/crypto";
+// import { createRxForwardReq, createRxNostr } from "rx-nostr";
+// export const rxNostr = createRxNostr({ verifier });
 
 import { ToggleRelayList } from "~/components/selectRelays";
 export function RelayPage() {
@@ -35,9 +36,12 @@ export function RelayPage() {
     //         setNIP33Data(relay_data)
     //     }
     // })
-    React.useEffect(() => {
-        rxReq.emit({ kinds: [30166], limit: 5 })
-    }, []);
+
+
+
+    // React.useEffect(() => {
+    //     rxReq.emit({ kinds: [30166], limit: 5 })
+    // }, []);
 
     function update_selected_relays(input_Data: any) {
         const nip_33_data: any = nip33Data;
@@ -77,7 +81,7 @@ export function RelayPage() {
                 data={nip33Data.relay_list}
                 setData={update_selected_relays}
             />
-            <ToggleRelayList></ToggleRelayList>
+            {/* <ToggleRelayList></ToggleRelayList> */}
 
         </>
 

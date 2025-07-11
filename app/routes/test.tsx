@@ -1,4 +1,4 @@
-import { Welcome } from "../pages/index";
+import { Welcome } from "../index";
 import type { Route } from "./+types/index";
 
 import UserProfileCard from "~/testComponents/userProfileCard";

@@ -7,11 +7,17 @@ import { alignProperty } from "node_modules/@mui/material/esm/styles/cssUtils";
 import React from "react";
 
 import { useAtom } from "jotai";
-import { editProfileEventId, accountsAtom, profileEvents } from "~/jotaiAtoms";
+import { accountsAtom, editProfileEventId, profileEvents } from "~/jotaiAtoms";
 
-import { generateSecretKey, getPublicKey, finalizeEvent, verifyEvent, nip19 } from 'nostr-tools'
-import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
-import { JsonEditor } from 'json-edit-react'
+import {
+    finalizeEvent,
+    generateSecretKey,
+    getPublicKey,
+    nip19,
+    verifyEvent,
+} from "nostr-tools";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
+import { JsonEditor } from "json-edit-react";
 
 const style = {
     color: "black",
@@ -25,34 +31,40 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-import { verifier, seckeySigner } from "@rx-nostr/crypto";
+import { seckeySigner, verifier } from "@rx-nostr/crypto";
 import { ToggleRelayList } from "./selectRelays";
-import { relayListAtom, selectedRelayListAtom, relayWebSocketsAtom } from "~/jotaiAtoms";
+import {
+    EditProfileJson,
+    ProfileJsonData,
+    relayListAtom,
+    relayWebSocketsAtom,
+    selectedRelayListAtom,
+} from "~/jotaiAtoms";
 
-import { rxNostr } from "~/pages/index"
+import { rxNostr } from "~/index";
 export default function EditNostrProfile() {
-    const [editEventId, setEventId] = useAtom(editProfileEventId)
-    const [profiles, setProfiles] = useAtom(profileEvents)
-    const [accounts, setAccounts] = useAtom(accountsAtom)
+    const [editEventId, setEventId] = useAtom(editProfileEventId);
+    const [profiles, setProfiles] = useAtom(profileEvents);
+    const [accounts, setAccounts] = useAtom(accountsAtom);
     const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
     const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom);
 
     let project_content = Object.assign({}, profiles[editEventId].json_content);
     let minimumProfileKeys = [
-        'name',
-        'display_name',
-        'nip05',
-        'about',
-        'picture',
-        'banner',
-        'website'
-    ]
-    minimumProfileKeys.forEach(str => {
+        "name",
+        "display_name",
+        "nip05",
+        "about",
+        "picture",
+        "banner",
+        "website",
+    ];
+    minimumProfileKeys.forEach((str) => {
         if (!(str in project_content)) {
             project_content[str] = ""; // or any default value
         }
     });
-    const [profileJsonData, setProfileJsonData] = React.useState(project_content);
+    const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson);
 
     async function publishEvents() {
         let result = rxNostr.send(
@@ -62,11 +74,11 @@ export default function EditNostrProfile() {
             },
             {
                 relays: selectedRelays,
-                signer: seckeySigner(accounts[0].nsec)
-            }
-        )
-        console.log("publishEvents")
-        console.log(result)
+                signer: seckeySigner(accounts[0].nsec),
+            },
+        );
+        console.log("publishEvents");
+        console.log(result);
     }
     return (
         <>
@@ -87,14 +99,16 @@ export default function EditNostrProfile() {
                     setData={setProfileJsonData}
                 />
             </Box>
-            <Typography
+            {
+                /* <Typography
                 variant="body1"
                 style={{ textAlign: "left", display: "flex" }}
             >
                 Select your Relays
             </Typography>
             <ToggleRelayList></ToggleRelayList>
-            <Button variant="contained" onClick={publishEvents}>Publish Updated Profile</Button>
+            <Button variant="contained" onClick={publishEvents}>Publish Updated Profile</Button> */
+            }
         </>
     );
 }

@@ -43,7 +43,7 @@ export function NSECModal() {
     setNSEC(event.target.value);
   };
 
-  const addAccount = (event: any) => {
+  const addAccount = () => {
     setAccounts([
       {
         nsec,

@@ -2,10 +2,19 @@ import { useAtom } from "jotai";
 import { appPageAtom } from "~/jotaiAtoms";
 
 import AddNostrAccount from "./components/addNostrAccount";
-import EditNostrProfile from "./components/editProfile";
+import EditNostrProfile from "./components/EditNostrProfile";
 import NostrProfiles from "./pages/nostrProfiles";
 import { RebroadcastPage } from "./pages/rebroadcastPage";
 import { RelayPage } from "./pages/RelayPage";
+import NostrAppBar from "./components/NostrAppBar";
+import NewAccountProfile from "./pages/NewAccountProfile";
+import NewAccountKeys from "./pages/NewAccountKeys";
+import NewAccountRelays from "./pages/NewAccountRelays";
+import ExistingAccountEdit from "./pages/ExistingAccountEdit";
+import NewAccountPublishProfile from "./pages/NewAccountPublishProfile";
+import NewAccountVerifyPublishedProfile from "./pages/NewAccountVerifyPublishedProfile";
+import ExistingAccountNSEC from "~/pages/ExistingAccountNSEC";
+import FetchingProfilePage from "./pages/FetchingProfilePage";
 export default function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
   if (appPage.page == "Add Account") {
@@ -26,7 +35,7 @@ export default function PageSelect() {
   if (appPage.page == "Edit Profile") {
     return (
       <>
-        <EditNostrProfile />
+        <ExistingAccountEdit />
       </>
     );
   }
@@ -41,6 +50,55 @@ export default function PageSelect() {
     return (
       <>
         <RelayPage />
+      </>
+    );
+  }
+  if (appPage.page == "New Account Keys") {
+    return (
+      <>
+        <NewAccountKeys />
+      </>
+    );
+  }
+  if (appPage.page == "New Account Profile") {
+    return (
+      <>
+        <NewAccountProfile />
+      </>
+    );
+  }
+  if (appPage.page == "New Account Relays") {
+    return (
+      <>
+        <NewAccountRelays />
+      </>
+    );
+  }
+  if (appPage.page == "New Account Publish Profile") {
+    return (
+      <>
+        <NewAccountPublishProfile />
+      </>
+    );
+  }
+  if (appPage.page == "New Account Verify Published Profile") {
+    return (
+      <>
+        <NewAccountVerifyPublishedProfile />
+      </>
+    );
+  }
+  if (appPage.page == "Existing Account NSEC") {
+    return (
+      <>
+        <ExistingAccountNSEC />
+      </>
+    );
+  }
+  if (appPage.page == "Fetching Profile Page") {
+    return (
+      <>
+        <FetchingProfilePage />
       </>
     );
   }

@@ -33,7 +33,8 @@ const style = {
   p: 4,
 };
 
-export function CreateNostrAccount() {
+import NostrAccountData from "~/components/nostrAccountData";
+export function CreateDevNostrAccount() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -96,7 +97,7 @@ export function CreateNostrAccount() {
         variant="contained"
         onClick={handleOpen}
       >
-        Create a new Nostr Account
+        Create Development Nostr Account
       </Button>
       <Modal
         open={open}
@@ -104,7 +105,8 @@ export function CreateNostrAccount() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <NostrAccountData />
+        {/* <Box sx={style}>
           <Typography
             id="modal-modal-title"
             variant="h6"
@@ -164,7 +166,7 @@ export function CreateNostrAccount() {
               e.preventDefault();
               handleClick(JSON.stringify({mnemonic: mnemonic, nsec: nsec, npub: npub, publicKey: publicKey, secretKey: bytesToHex(secretKey)},null, 2));
             }}>Copy Everything as JSON</Button>
-        </Box>
+        </Box> */}
       </Modal>
     </>
   );

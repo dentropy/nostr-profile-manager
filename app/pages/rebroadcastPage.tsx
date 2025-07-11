@@ -8,7 +8,7 @@ import { editProfileEventId, accountsAtom, profileEvents, selectedRelayListAtom,
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-import { rxNostr } from "~/pages/index"
+import { rxNostr } from "~/index"
 
 import { ToggleRelayList } from "~/components/selectRelays";
 export function RebroadcastPage() {
