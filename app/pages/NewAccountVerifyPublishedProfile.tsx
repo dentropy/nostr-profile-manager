@@ -27,19 +27,32 @@ export default function NewAccountVerifyPublishedProfile() {
     const [profileJson, setProfileJson] = useAtom(EditProfileJson);
     const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
 
+    const [events, setEvents] = React.useState({});
+
     async function run_filter() {
-        console.log(accounts["testing"])
-        console.log(accounts["testing"].pubkey)
+        console.log("RUNNING_THE_FILTER")
+        console.log(accounts["testing"]);
+        console.log(accounts["testing"].pubkey);
         let the_filter = { authors: [accounts["testing"].pubkey], kinds: [0] };
-        console.log("the_filter")
+        console.log("the_filter");
         console.log(the_filter);
-        for await (const msg of my_pool.req([the_filter], {relays: theRelayList.relays.testing})) {
+        for await (
+            const msg of my_pool.req([the_filter], {
+                relays: theRelayList.relays.testing,
+            })
+        ) {
             if (msg[0] === "EVENT") {
-                console.log("Verify New Account Events")
-                console.log(msg[2])
+                console.log("GOT_VERIFICATION_EVENT");
+                console.log(msg[2]);
+                // Add new item to the dictionary without overwriting
+                setEvents((prevItems) => ({
+                    ...prevItems, // Spread existing items
+                    [msg[2].id]: msg[2], // Add new item with unique key
+                }))
             }
             if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
         }
+        console.log("DONE_RUNNING_FILRER")
     }
 
     const checkRelays = () => {
@@ -62,6 +75,10 @@ export default function NewAccountVerifyPublishedProfile() {
 
             <SyntaxHighlighter language="json" style={docco}>
                 {JSON.stringify(theRelayList.relays.testing, null, 2)}
+            </SyntaxHighlighter>
+
+            <SyntaxHighlighter language="json" style={docco}>
+                {JSON.stringify(events, null, 2)}
             </SyntaxHighlighter>
 
             <Button variant="contained" onClick={checkRelays}>
