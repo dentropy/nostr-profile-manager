@@ -9,6 +9,7 @@ import {
     masterRelayList,
     profileEvents,
     selectedRelayListAtom,
+    selectedAccountAtom
 } from "~/jotaiAtoms";
 
 import { my_pool } from "~/relays";
@@ -17,6 +18,7 @@ import { Button } from "@mui/material";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { NPool, NRelay1 } from "@nostrify/nostrify";
 
 export default function NewAccountVerifyPublishedProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
@@ -26,38 +28,82 @@ export default function NewAccountVerifyPublishedProfile() {
     const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
     const [profileJson, setProfileJson] = useAtom(EditProfileJson);
     const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
 
     const [events, setEvents] = React.useState({});
 
-    async function run_filter() {
-        console.log("RUNNING_THE_FILTER")
-        console.log(accounts["testing"]);
-        console.log(accounts["testing"].pubkey);
-        let the_filter = { authors: [accounts["testing"].pubkey], kinds: [0] };
-        console.log("the_filter");
-        console.log(the_filter);
-        for await (
-            const msg of my_pool.req([the_filter], {
-                relays: theRelayList.relays.testing,
-            })
-        ) {
-            if (msg[0] === "EVENT") {
-                console.log("GOT_VERIFICATION_EVENT");
-                console.log(msg[2]);
-                // Add new item to the dictionary without overwriting
-                setEvents((prevItems) => ({
-                    ...prevItems, // Spread existing items
-                    [msg[2].id]: msg[2], // Add new item with unique key
-                }))
-            }
-            if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
-        }
-        console.log("DONE_RUNNING_FILRER")
-    }
+    async function checkRelays() {
+        let the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
 
-    const checkRelays = () => {
-        run_filter();
-    };
+        // console.log("RUNNING_THE_FILTER")
+        // console.log(accounts[selectedAccount]);
+        // console.log(accounts[selectedAccount].pubkey);
+        // console.log("the_filter");
+        // console.log(the_filter)
+        let theEventsObj = {}
+        for (const tmp_relay_url of theRelayList.relays.testing) {
+            const myrelay = new NRelay1(tmp_relay_url);
+            console.log(`CheckingRelayNewAccount ${tmp_relay_url}`)
+            await new Promise(resolve => setTimeout(resolve, 500));
+            for await (
+                const msg of myrelay.req([the_filter])
+            ) {
+                if (msg[0] === "EVENT") {
+                    console.log("GOT_VERIFICATION_EVENT");
+                    console.log(msg[2]);
+                    console.log("SETTING_VERIFICATION_EVENT")
+                    console.log(events)
+                    console.log("theEventsObj")
+                    console.log(theEventsObj)
+                    console.log("Object.keys(events)")
+                    console.log(Object.keys(events))
+
+                    if (!Object.keys(theEventsObj).includes(selectedAccount)) {
+                        console.log("TRIED_SETTING")
+                        // setEvents((prevItems) => ({
+                        //     ...prevItems,
+                        //     [selectedAccount]: {
+                        //         ...prevItems[selectedAccount],
+                        //         [msg[2].id]: { event: msg[2], relays: [tmp_relay_url] }
+                        //     },
+                        // }))
+                        theEventsObj = {
+                            ...theEventsObj,
+                            [selectedAccount]: {
+                                ...theEventsObj[selectedAccount],
+                                [msg[2].id]: { event: msg[2], relays: [tmp_relay_url] }
+                            }
+                        }
+                        setEvents(theEventsObj)
+                    } else {
+                        if (!theEventsObj[selectedAccount][msg[2].id].relays.includes(tmp_relay_url)) {
+                            console.log("TRIED_UPDATING")
+                            // setEvents((prevItems) => ({
+                            //     ...prevItems,
+                            //     [selectedAccount]: {
+                            //         ...prevItems[selectedAccount],
+                            //         [msg[2].id]: {
+                            //             ...prevItems[selectedAccount][msg[2].id],
+                            //             relays: [...prevItems[selectedAccount][msg[2].id].relays, tmp_relay_url]
+                            //         }
+                            //     }
+                            // }))
+                            theEventsObj = {
+                                ...theEventsObj,
+                                [selectedAccount]: {
+                                    ...theEventsObj[selectedAccount],
+                                    [msg[2].id]: { event: msg[2], relays: [...theEventsObj[selectedAccount][msg[2].id].relays, tmp_relay_url] }
+                                },
+                            }
+                            setEvents(theEventsObj)
+                        }
+                    }
+                }
+                if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
+            }
+            myrelay.close()
+        }
+    }
 
     const prevousPage = () => {
         setAppPage({ page: "New Account Profile" });
@@ -67,7 +113,7 @@ export default function NewAccountVerifyPublishedProfile() {
     };
 
     React.useEffect(() => {
-        run_filter();
+        checkRelays();
     }, []);
     return (
         <>
@@ -75,6 +121,11 @@ export default function NewAccountVerifyPublishedProfile() {
 
             <SyntaxHighlighter language="json" style={docco}>
                 {JSON.stringify(theRelayList.relays.testing, null, 2)}
+            </SyntaxHighlighter>
+
+
+            <SyntaxHighlighter language="json" style={docco}>
+                {JSON.stringify(accounts, null, 2)}
             </SyntaxHighlighter>
 
             <SyntaxHighlighter language="json" style={docco}>

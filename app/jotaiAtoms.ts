@@ -12,6 +12,9 @@ export const accountsAtom = atomWithStorage("accountsAtom", {}, storage);
 // export const profileEvents = atom({});
 export const profileEvents = atomWithStorage("profileEvents", {}, storage);
 
+// export const selectedAccount = atom({});
+export const selectedAccountAtom = atomWithStorage("selectedAccount", undefined, storage);
+
 // export const editProfileEventId = atom()
 export const editProfileEventId = atomWithStorage(
     "editProfileEventId",

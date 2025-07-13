@@ -39,6 +39,7 @@ import {
     relayListAtom,
     relayWebSocketsAtom,
     selectedRelayListAtom,
+    selectedAccountAtom
 } from "~/jotaiAtoms";
 
 import { rxNostr } from "~/index";
@@ -48,7 +49,7 @@ export default function EditNostrProfile() {
     const [accounts, setAccounts] = useAtom(accountsAtom);
     const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
     const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom);
-
+  const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     let project_content = Object.assign({}, profiles[editEventId].json_content);
     let minimumProfileKeys = [
         "name",
@@ -74,7 +75,7 @@ export default function EditNostrProfile() {
             },
             {
                 relays: selectedRelays,
-                signer: seckeySigner(accounts[0].nsec),
+                signer: seckeySigner(accounts[selectedAccount].nsec),
             },
         );
         console.log("publishEvents");

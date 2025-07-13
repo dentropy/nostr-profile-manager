@@ -12,7 +12,11 @@ export const DEFAULT_USERMETA_RELAYS = [
 
 export const DEFAULT_TESTING_RELAYS = [
   "ws://ditto.local/relay",
-  "ws://piprelay.local"
+  "ws://khatru.local",
+  "ws://piprelay.local",
+  "ws://sqlitenode.local",
+  "ws://rsrelay.local",
+  "ws://strfry.local/"
   // "wss://purplepag.es",
   // "wss://user.kindpag.es",
   // "wss://relay.nostr.band",

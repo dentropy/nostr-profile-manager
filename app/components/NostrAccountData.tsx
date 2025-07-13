@@ -59,16 +59,28 @@ export default function NostrAccountData() {
     const [profiles, setProfiles] = useAtom(profileEvents)
     const [editEventId, setEventId] = useAtom(editProfileEventId)
     const addAccount = () => {
-        setAccounts([
-            {
+        let pubkey = getPublicKey(nip19.decode(nsec).data)
+        setAccounts((prevState) => ({
+            ...prevState, // Spread the previous state to keep other keys
+            [pubkey]: {
                 nsec,
                 npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-                privkey: nip19.decode(nsec).data,
+                privkey: bytesToHex(nip19.decode(nsec).data),
                 pubkey: getPublicKey(nip19.decode(nsec).data),
             },
-        ]);
-        setProfiles({"NewAccountEvent": {"JsonContent": {}}})
-        setEventId("NewAccountEvent")
+        }));
+        // setAccounts([
+        //     {
+        //         nsec,
+        //         npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
+        //         privkey: nip19.decode(nsec).data,
+        //         pubkey: getPublicKey(nip19.decode(nsec).data),
+        //     },
+        // ]);
+        let profileData = {}
+        profileData[pubkey] = { "JsonContent": {} }
+        setProfiles(profileData)
+        setEventId(pubkey)
     };
     return (
         <Box sx={style}>

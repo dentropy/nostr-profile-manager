@@ -12,7 +12,8 @@ import {
     profileEvents,
     relayWebSocketsAtom,
     selectedRelayListAtom,
-    masterRelayList
+    masterRelayList,
+    selectedAccountAtom
 } from "~/jotaiAtoms";
 import { faker } from "@faker-js/faker";
 
@@ -39,6 +40,7 @@ import { ToggleRelayList } from "~/components/selectRelays";
 import { NSecSigner } from "@nostrify/nostrify";
 
 import { my_pool } from "~/relays";
+import { bytesToHex } from "nostr-tools/utils";
 export function PublishTestProfile() {
     const [editEventId, setEventId] = useAtom(editProfileEventId);
     const [profiles, setProfiles] = useAtom(profileEvents);
@@ -48,49 +50,40 @@ export function PublishTestProfile() {
     const [nip33Data, setNIP33Data] = useAtom(NIP33Data);
     const [appPage, setAppPage] = useAtom(appPageAtom);
     const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson);
-
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
-    // const [mnemonic, setMnemonic] = React.useState(generateSeedWords());
-    // const [secretKey, setSecretKey] = React.useState(
-    //     privateKeyFromSeedWords(mnemonic, "", 0),
-    // );
-    // const [publicKey, setPublicKey] = React.useState(getPublicKey(secretKey));
-    // const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
-    // const [npub, setNpub] = React.useState(nip19.npubEncode(publicKey));
 
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     React.useEffect(() => {
-        if (!Object.keys(accounts).includes("testing")) {
+        console.log("CHECKING_FOR_ACCOUNTS")
+        if (Object.keys(accounts).length == 0) {
+            console.log("GENERATING_ACCOUNT")
             const mnemonic = generateSeedWords();
             const secretKey = privateKeyFromSeedWords(mnemonic, "", 0);
-            const publicKey = getPublicKey(secretKey);
+            const pubkey = getPublicKey(secretKey);
             const npub = nip19.nsecEncode(secretKey);
-            const nsec = nip19.npubEncode(publicKey);
+            const nsec = nip19.npubEncode(pubkey);
+            const privkey = bytesToHex(secretKey)
+            const account_data = {
+                mnemonic: mnemonic,
+                nsec: nsec,
+                npub: npub,
+                privkey: privkey,
+                pubkey: pubkey,
+            }
+            console.log("SETTING_THE_ACCOUNTS")
+            setSelectedAccount(pubkey)
             setAccounts((prevItems) => ({
                 ...prevItems, // Spread existing items
-                "testing": {
-                    mnemonic: mnemonic,
-                    nsec: nsec,
-                    npub: npub,
-                    privkey: nsec,
-                    pubkey: publicKey,
-                }, // Add new item with unique key
+                [pubkey]: account_data,
             }));
+            console.log("SHOULD_HAVE_SET_THE_ACCOUNTS")
+
         }
         // Set the Relays
         setSelectedRelays(DEFAULT_TESTING_RELAYS);
         my_pool.group(DEFAULT_TESTING_RELAYS);
-
-        // // Set the Accounts from Memory
-        // setAccounts([
-        //     {
-        //         nsec,
-        //         npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-        //         privkey: nip19.decode(nsec).data,
-        //         pubkey: getPublicKey(nip19.decode(nsec).data),
-        //     },
-        // ]);
 
         // Set the test account
         const username = faker.internet.username();
@@ -120,28 +113,33 @@ export function PublishTestProfile() {
     }, []);
 
     const publishProfile = async () => {
-        console.log("PAUL_WAS_HERE")
+        let nip65_tags = [];
+        for (const relay of selectedRelays) {
+            nip65_tags.push(["r", relay]);
+        }
+        let unix_time = Math.floor((new Date()).getTime() / 1000);
         console.log(accounts)
-        console.log(accounts["testing"])
-        console.log(accounts["testing"].mnemonic)
-        let secret_key = privateKeyFromSeedWords(accounts["testing"].mnemonic, "", 0);
-        const signer = new NSecSigner(secret_key);
-        const event = await signer.signEvent({
-            kind: 0,
-            content: "Hello, world!",
+        const signer = new NSecSigner(accounts[selectedAccount].privkey);
+        const profileEvent = await signer.signEvent({ 
+            kind: 0, 
+            content: JSON.stringify(profileJsonData),
             tags: [],
-            created_at: 0,
+            created_at: unix_time 
+        })
+        let nip65Event = await signer.signEvent({ 
+            kind: 10002,
+            content: "",
+            tags: nip65_tags,
+            created_at: unix_time
         });
-        console.log("THE_EVENT");
-        console.log(event);
-        console.log("THE_RELAYS")
-        console.log(theRelayList.relays.testing)
-        my_pool.event(event, { relays: theRelayList.relays.testing });
-        console.log("SHOUD_HAVE_PUBLISHED");
+        console.log(profileEvent);
+        console.log(nip65Event);
+        my_pool.event(profileEvent)
+        my_pool.event(nip65Event)
     };
 
     const nextPage = () => {
-        setAppPage({ page: "New Account Verify Published Profile" });
+        setAppPage({ page: "New Account Verify Published Profile" })
     };
 
     return (
@@ -160,7 +158,7 @@ export function PublishTestProfile() {
                 variant="body3"
                 style={{ textAlign: "left", display: "flex" }}
             >
-                Edit Your Profile Info<br></br>
+                Edit Your Test Profile Info<br></br>
             </Typography>
             <JsonEditor
                 data={profileJsonData}

@@ -84,29 +84,8 @@ export default function ExistingAccountNSEC() {
             }
         }
         fetchData();
-
-        // rxReq.emit(filter)
-        // setAccounts(accountsData);
     };
 
-    // rxNostr.use(rxReq).subscribe((packet) => {
-    //     console.log(packet);
-    // });
-
-    //   React.useEffect(() => {
-    //     if (accounts.length >= 1) {
-    //   console.log("EMIT THE DATA PLZ");
-    //   console.log(accounts[0]);
-    //   console.log(accounts[0].pubkey)
-    //   let filter = {
-    //     kinds: [0],
-    //     authors: [accounts[0].pubkey],
-    //   }
-    //   console.log(filter)
-    //   // rxReq.emit(filter);
-    //       // console.log(profileData);
-    //     }
-    //   }, [accounts]);
     return (
         <>
             <Box>
