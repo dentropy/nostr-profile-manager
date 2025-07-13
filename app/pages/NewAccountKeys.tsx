@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { appPageAtom, accountsAtom } from "~/jotaiAtoms";
 
-import NostrAccountData from "~/components/nostrAccountData";
+import NostrAccountData from "~/components/NostrAccountData";
 import { generateSecretKey, getPublicKey, nip19 } from "nostr-tools";
 import { Button } from "@mui/material";
 

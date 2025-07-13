@@ -33,7 +33,7 @@ const style = {
   p: 4,
 };
 
-import NostrAccountData from "~/components/nostrAccountData";
+import NostrAccountData from "~/components/NostrAccountData";
 export function CreateDevNostrAccount() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);

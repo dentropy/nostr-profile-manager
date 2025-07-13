@@ -15,7 +15,7 @@ import { useAtom } from "jotai";
 import { profileEvents } from "~/jotaiAtoms";
 import { accountsAtom } from "~/jotaiAtoms";
 import { appPageAtom, NIP33Data } from "~/jotaiAtoms";
-import PageSelect from "./PageSelect";
+import { PageSelect } from "~/PageSelect";
 
 function findFirstMatch(string_list: String[], target: String) {
   for (let str of string_list) {

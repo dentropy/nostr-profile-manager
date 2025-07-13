@@ -17,7 +17,7 @@ import ExistingAccountNSEC from "~/pages/ExistingAccountNSEC";
 import FetchingProfilePage from "./pages/FetchingProfilePage";
 import { PublishTestProfile } from "./pages/PublishTestProfile";
 
-export default function PageSelect() {
+export function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
   if (appPage.page == "Add Account") {
     return (
