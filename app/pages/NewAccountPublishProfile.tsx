@@ -38,6 +38,9 @@ export default function NewAccountPublishProfile() {
     const prevousPage = () => {
         setAppPage({ page: "New Account Relays" });
     };
+    const nextPage = () => {
+        setAppPage({ page: "New Account Verify Published Profile" });
+    };
     const Publish = () => {
         console.log("Should Publish");
         console.log(rxNostr);
@@ -56,9 +59,6 @@ export default function NewAccountPublishProfile() {
         });
         console.log(profileEvent);
         console.log(nip65Event);
-    };
-    const nextPage = () => {
-        setAppPage({ page: "New Account Verify Published Profile" });
     };
     return (
         <>

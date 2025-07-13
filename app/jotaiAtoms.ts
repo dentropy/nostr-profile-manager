@@ -1,13 +1,32 @@
 import { atom } from "jotai";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
-export const accountsAtom = atom([]);
-
+// Desult State Systems
 export const appPageAtom = atom({ page: "Add Account" });
 
-export const profileEvents = atom({});
-export const editProfileEventId = atom();
+const storage = createJSONStorage(() => sessionStorage);
 
-import { DEFAULT_USERMETA_RELAYS } from "./relays";
+// export const accountsAtom = atom([]);
+export const accountsAtom = atomWithStorage("accountsAtom", {}, storage);
+
+// export const profileEvents = atom({});
+export const profileEvents = atomWithStorage("profileEvents", {}, storage);
+
+// export const editProfileEventId = atom()
+export const editProfileEventId = atomWithStorage(
+    "editProfileEventId",
+    {},
+    storage,
+);
+
+import { DEFAULT_TESTING_RELAYS, DEFAULT_USERMETA_RELAYS } from "./relays";
+export const masterRelayList = atomWithStorage("masterRelayList", {
+    "relays": {
+        "default": DEFAULT_USERMETA_RELAYS,
+        "testing": DEFAULT_TESTING_RELAYS,
+    },
+}, storage);
+
 export const relayListAtom = atom(DEFAULT_USERMETA_RELAYS);
 export const selectedRelayListAtom = atom(DEFAULT_USERMETA_RELAYS);
 

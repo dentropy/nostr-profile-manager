@@ -12,6 +12,7 @@ import {
     profileEvents,
     relayWebSocketsAtom,
     selectedRelayListAtom,
+    masterRelayList
 } from "~/jotaiAtoms";
 import { faker } from "@faker-js/faker";
 
@@ -48,31 +49,48 @@ export function PublishTestProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
     const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson);
 
-    const [mnemonic, setMnemonic] = React.useState(generateSeedWords());
-    const [secretKey, setSecretKey] = React.useState(
-        privateKeyFromSeedWords(mnemonic, "", 0),
-    );
-    const [publicKey, setPublicKey] = React.useState(getPublicKey(secretKey));
-    const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
-    const [npub, setNpub] = React.useState(nip19.npubEncode(publicKey));
+    const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
+    // const [mnemonic, setMnemonic] = React.useState(generateSeedWords());
+    // const [secretKey, setSecretKey] = React.useState(
+    //     privateKeyFromSeedWords(mnemonic, "", 0),
+    // );
+    // const [publicKey, setPublicKey] = React.useState(getPublicKey(secretKey));
+    // const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
+    // const [npub, setNpub] = React.useState(nip19.npubEncode(publicKey));
 
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     React.useEffect(() => {
-
+        if (!Object.keys(accounts).includes("testing")) {
+            const mnemonic = generateSeedWords();
+            const secretKey = privateKeyFromSeedWords(mnemonic, "", 0);
+            const publicKey = getPublicKey(secretKey);
+            const npub = nip19.nsecEncode(secretKey);
+            const nsec = nip19.npubEncode(publicKey);
+            setAccounts((prevItems) => ({
+                ...prevItems, // Spread existing items
+                "testing": {
+                    mnemonic: mnemonic,
+                    nsec: nsec,
+                    npub: npub,
+                    privkey: nsec,
+                    pubkey: publicKey,
+                }, // Add new item with unique key
+            }));
+        }
         // Set the Relays
         setSelectedRelays(DEFAULT_TESTING_RELAYS);
         my_pool.group(DEFAULT_TESTING_RELAYS);
 
-        // Set the Accounts from Memory
-        setAccounts([
-            {
-                nsec,
-                npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-                privkey: nip19.decode(nsec).data,
-                pubkey: getPublicKey(nip19.decode(nsec).data),
-            },
-        ]);
+        // // Set the Accounts from Memory
+        // setAccounts([
+        //     {
+        //         nsec,
+        //         npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
+        //         privkey: nip19.decode(nsec).data,
+        //         pubkey: getPublicKey(nip19.decode(nsec).data),
+        //     },
+        // ]);
 
         // Set the test account
         const username = faker.internet.username();
@@ -102,7 +120,11 @@ export function PublishTestProfile() {
     }, []);
 
     const publishProfile = async () => {
-        let secret_key = privateKeyFromSeedWords(mnemonic, "", 0);
+        console.log("PAUL_WAS_HERE")
+        console.log(accounts)
+        console.log(accounts["testing"])
+        console.log(accounts["testing"].mnemonic)
+        let secret_key = privateKeyFromSeedWords(accounts["testing"].mnemonic, "", 0);
         const signer = new NSecSigner(secret_key);
         const event = await signer.signEvent({
             kind: 0,
@@ -110,14 +132,16 @@ export function PublishTestProfile() {
             tags: [],
             created_at: 0,
         });
-        console.log("THE_EVENT")
-        console.log(event)
-        my_pool.event(event, {relays: DEFAULT_TESTING_RELAYS});
-        console.log("SHOUD_HAVE_PUBLISHED")
+        console.log("THE_EVENT");
+        console.log(event);
+        console.log("THE_RELAYS")
+        console.log(theRelayList.relays.testing)
+        my_pool.event(event, { relays: theRelayList.relays.testing });
+        console.log("SHOUD_HAVE_PUBLISHED");
     };
 
     const nextPage = () => {
-        setAppPage({ page: "New Account Relays" });
+        setAppPage({ page: "New Account Verify Published Profile" });
     };
 
     return (
