@@ -40,10 +40,10 @@ export default function NewAccountPublishProfile() {
     };
     const Publish = () => {
         console.log("Should Publish");
-        console.log(rxNostr)
-        let nip65_tags = []
-        for(const relay of selectedRelays) {
-            nip65_tags.push(["r", relay])
+        console.log(rxNostr);
+        let nip65_tags = [];
+        for (const relay of selectedRelays) {
+            nip65_tags.push(["r", relay]);
         }
         let profileEvent = rxNostr.send({
             kind: 0,
@@ -52,12 +52,10 @@ export default function NewAccountPublishProfile() {
         let nip65Event = rxNostr.send({
             kind: 10002,
             content: "",
-            tags: nip65_tags
+            tags: nip65_tags,
         });
-        console.log(profileEvent)
-        console.log(nip65Event)
-
-
+        console.log(profileEvent);
+        console.log(nip65Event);
     };
     const nextPage = () => {
         setAppPage({ page: "New Account Verify Published Profile" });
@@ -71,7 +69,7 @@ export default function NewAccountPublishProfile() {
             <Button variant="contained" onClick={prevousPage}>
                 Previouis: New Account Relays
             </Button>
-                    <Button variant="contained" onClick={nextPage}>
+            <Button variant="contained" onClick={nextPage}>
                 Next: Verify Published Profile
             </Button>
             <p>{JSON.stringify(profileJson)}</p>

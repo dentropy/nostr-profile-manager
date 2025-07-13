@@ -27,9 +27,7 @@ function findFirstMatch(string_list: String[], target: String) {
 }
 
 
-import { NRelay1 } from "@nostrify/nostrify";
-let relay_url = "wss://purplepag.es/"
-export const myrelay = new NRelay1(relay_url);
+
 export function Welcome() {
   const [accounts, setAccounts] = useAtom(accountsAtom);
   const [profileData, setProfileData] = useAtom(profileEvents);

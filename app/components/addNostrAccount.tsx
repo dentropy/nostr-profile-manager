@@ -16,6 +16,10 @@ export default function AddNostrAccount() {
   const selectExistingAccountNSEC = () => {
     setAppPage({ page: "Existing Account NSEC" });
   };
+  const PublishTestProfile = () => {
+    setAppPage({ page: "Publish Test Profile" });
+  };
+
   return (
     <>
       <Typography
@@ -48,6 +52,12 @@ export default function AddNostrAccount() {
         Developer Featuers
       </Typography>
       <CreateDevNostrAccount />
+      <Button
+        variant="contained"
+        onClick={PublishTestProfile}
+      >
+        Publish Test Profile
+      </Button>
     </>
   );
 }

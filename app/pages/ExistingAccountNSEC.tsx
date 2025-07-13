@@ -18,7 +18,7 @@ import { accountsAtom } from "~/jotaiAtoms";
 
 import { rxReq } from "~/index";
 
-import { myrelay } from "~/index";
+// import { myrelay } from "~/relays";
 // import { verifier } from "@rx-nostr/crypto";
 // import { createRxForwardReq, createRxNostr } from "rx-nostr";
 // import { DEFAULT_USERMETA_RELAYS } from "~/relays";

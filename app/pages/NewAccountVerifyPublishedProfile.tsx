@@ -15,12 +15,12 @@ export default function NewAccountVerifyPublishedProfile() {
     return (
         <>
             <h1>Verify Your Nostr Profile Was Published Sucessfully</h1>
-            <Button variant="contained" onClick={prevousPage}>
+            {/* <Button variant="contained" onClick={prevousPage}>
                 Previouis: New Account Profile
             </Button>
             <Button variant="contained" onClick={nextPage}>
                 Next: New Account Publish Profile
-            </Button>
+            </Button> */}
         </>
     );
 }
