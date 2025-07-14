@@ -181,7 +181,7 @@ export default function NewAccountVerifyPublishedProfile() {
                 boxSizing: "border-box", // Prevent padding from causing overflow
             }}>
                 <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                    {JSON.stringify(events, null, 2)}
+                    {JSON.stringify(events[selectedAccount], null, 2)}
                 </pre>
             </Box>
 
