@@ -13,6 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@faker-js/faker": "^9.9.0",
+    "@highlightjs/cdn-assets": "^11.11.1",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "@nostrify/nostrify": "npm:@jsr/nostrify__nostrify@^0.46.3",
@@ -21,6 +22,7 @@
     "@rx-nostr/crypto": "^0.0.0",
     "bip39": "^3.1.0",
     "faker": "^6.6.6",
+    "highlight.js": "^11.11.1",
     "isbot": "^5.1.27",
     "jotai": "^2.12.5",
     "json-edit-react": "^1.27.2",
@@ -30,7 +32,8 @@
     "react-router": "^7.5.3",
     "react-syntax-highlighter": "^15.6.1",
     "rx-nostr": "^3.6.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "wordwrapjs": "^5.1.0"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.3",

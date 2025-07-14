@@ -118,7 +118,6 @@ export function PublishTestProfile() {
             nip65_tags.push(["r", relay]);
         }
         let unix_time = Math.floor((new Date()).getTime() / 1000);
-        console.log(accounts)
         const signer = new NSecSigner(accounts[selectedAccount].privkey);
         const profileEvent = await signer.signEvent({ 
             kind: 0, 
@@ -132,10 +131,11 @@ export function PublishTestProfile() {
             tags: nip65_tags,
             created_at: unix_time
         });
+        console.log("Here are our events")
         console.log(profileEvent);
         console.log(nip65Event);
-        my_pool.event(profileEvent)
-        my_pool.event(nip65Event)
+        my_pool.event(profileEvent, {relays: DEFAULT_TESTING_RELAYS})
+        my_pool.event(nip65Event, {relays: DEFAULT_TESTING_RELAYS})
     };
 
     const nextPage = () => {

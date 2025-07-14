@@ -14,12 +14,18 @@ import {
 
 import { my_pool } from "~/relays";
 
-import { Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { NPool, NRelay1 } from "@nostrify/nostrify";
 
+import hljs from 'highlight.js';
+import 'highlight.js/styles/default.css';
+
+import wordwrap from 'wordwrapjs'
+
+import { CodeBlock } from "~/components/CodeBlock";
 export default function NewAccountVerifyPublishedProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
     const [editEventId, setEventId] = useAtom(editProfileEventId);
@@ -31,6 +37,10 @@ export default function NewAccountVerifyPublishedProfile() {
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
 
     const [events, setEvents] = React.useState({});
+    // hljs.registerLanguage('javascript', javascript);
+    // const highlightedCode = hljs.highlight(JSON.stringify(events, null, 2), { language: 'javascript' }).value
+
+
 
     async function checkRelays() {
         let the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
@@ -67,11 +77,37 @@ export default function NewAccountVerifyPublishedProfile() {
                         //         [msg[2].id]: { event: msg[2], relays: [tmp_relay_url] }
                         //     },
                         // }))
-                        theEventsObj = {
-                            ...theEventsObj,
-                            [selectedAccount]: {
-                                ...theEventsObj[selectedAccount],
-                                [msg[2].id]: { event: msg[2], relays: [tmp_relay_url] }
+                        let profile_json = undefined
+                        if (msg[2].kind == 0) {
+                            try {
+                                profile_json = JSON.parse(msg[2].content)
+                            } catch (error) {
+                                console.log("Could not parse profile_json")
+                                console.log(error)
+                            }
+                        }
+                        if (profile_json != undefined) {
+                            theEventsObj = {
+                                ...theEventsObj,
+                                [selectedAccount]: {
+                                    ...theEventsObj[selectedAccount],
+                                    [msg[2].id]: {
+                                        profile_json: profile_json,
+                                        event: msg[2],
+                                        relays: [tmp_relay_url]
+                                    }
+                                }
+                            }
+                        } else {
+                            theEventsObj = {
+                                ...theEventsObj,
+                                [selectedAccount]: {
+                                    ...theEventsObj[selectedAccount],
+                                    [msg[2].id]: {
+                                        event: msg[2],
+                                        relays: [tmp_relay_url]
+                                    }
+                                }
                             }
                         }
                         setEvents(theEventsObj)
@@ -92,7 +128,9 @@ export default function NewAccountVerifyPublishedProfile() {
                                 ...theEventsObj,
                                 [selectedAccount]: {
                                     ...theEventsObj[selectedAccount],
-                                    [msg[2].id]: { event: msg[2], relays: [...theEventsObj[selectedAccount][msg[2].id].relays, tmp_relay_url] }
+                                    [msg[2].id]: { 
+                                        ...theEventsObj[selectedAccount][msg[2].id],
+                                        relays: [...theEventsObj[selectedAccount][msg[2].id].relays, tmp_relay_url] }
                                 },
                             }
                             setEvents(theEventsObj)
@@ -128,9 +166,17 @@ export default function NewAccountVerifyPublishedProfile() {
                 {JSON.stringify(accounts, null, 2)}
             </SyntaxHighlighter>
 
-            <SyntaxHighlighter language="json" style={docco}>
-                {JSON.stringify(events, null, 2)}
-            </SyntaxHighlighter>
+            <Box sx={{
+                maxWidth: "100%", // Ensure container doesn't exceed parent width
+                overflowX: "auto", // Enable horizontal scrolling for overflow
+                padding: "10px",
+                boxSizing: "border-box", // Prevent padding from causing overflow
+            }}>
+                <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                    {JSON.stringify(events, null, 2)}
+                </pre>
+            </Box>
+
 
             <Button variant="contained" onClick={checkRelays}>
                 Check Relays
