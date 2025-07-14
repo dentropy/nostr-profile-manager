@@ -91,10 +91,12 @@ export default function NewAccountVerifyPublishedProfile() {
                                 ...theEventsObj,
                                 [selectedAccount]: {
                                     ...theEventsObj[selectedAccount],
-                                    [msg[2].id]: {
-                                        profile_json: profile_json,
-                                        event: msg[2],
-                                        relays: [tmp_relay_url]
+                                    [msg[2].kind]: {
+                                        [msg[2].id]: {
+                                            profile_json: profile_json,
+                                            event: msg[2],
+                                            relays: [tmp_relay_url]
+                                        }
                                     }
                                 }
                             }
@@ -103,16 +105,18 @@ export default function NewAccountVerifyPublishedProfile() {
                                 ...theEventsObj,
                                 [selectedAccount]: {
                                     ...theEventsObj[selectedAccount],
-                                    [msg[2].id]: {
-                                        event: msg[2],
-                                        relays: [tmp_relay_url]
+                                    [msg[2].kind]: {
+                                        [msg[2].id]: {
+                                            event: msg[2],
+                                            relays: [tmp_relay_url]
+                                        }
                                     }
                                 }
                             }
                         }
                         setEvents(theEventsObj)
                     } else {
-                        if (!theEventsObj[selectedAccount][msg[2].id].relays.includes(tmp_relay_url)) {
+                        if (!theEventsObj[selectedAccount][msg[2].kind][msg[2].id].relays.includes(tmp_relay_url)) {
                             console.log("TRIED_UPDATING")
                             // setEvents((prevItems) => ({
                             //     ...prevItems,
@@ -128,9 +132,13 @@ export default function NewAccountVerifyPublishedProfile() {
                                 ...theEventsObj,
                                 [selectedAccount]: {
                                     ...theEventsObj[selectedAccount],
-                                    [msg[2].id]: { 
-                                        ...theEventsObj[selectedAccount][msg[2].id],
-                                        relays: [...theEventsObj[selectedAccount][msg[2].id].relays, tmp_relay_url] }
+                                    [msg[2].kind]: {
+                                        ...theEventsObj[selectedAccount][msg[2].kind],
+                                        [msg[2].id]: {
+                                            ...theEventsObj[selectedAccount][msg[2].kind][msg[2].id],
+                                            relays: [...theEventsObj[selectedAccount][msg[2].kind][msg[2].id].relays, tmp_relay_url]
+                                        }
+                                    }
                                 },
                             }
                             setEvents(theEventsObj)
