@@ -34,126 +34,60 @@ export default function NewAccountVerifyPublishedProfile() {
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [events, setEvents] = React.useState({});
     async function checkRelays() {
-        let the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
-        console.log("THE_FILTER")
-        console.log(the_filter)
+        const the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
+        console.log("THE_FILTER", the_filter);
+
+        // Batch updates to events in a local object before setting state
+        let updatedEvents = { ...events };
+
         for (const tmp_relay_url of relayObj.relay_url_list["testing"].urls) {
-            console.log(`relayObj.relay_url_list["testing"].urls`)
-            console.log(relayObj.relay_url_list["testing"].urls)
-            console.log(tmp_relay_url)
+            console.log("Checking relay:", tmp_relay_url);
             const myrelay = new NRelay1(tmp_relay_url);
-            console.log(`CheckingRelayNewAccount ${tmp_relay_url}`)
             await new Promise(resolve => setTimeout(resolve, 500));
-            let we_set_it_continue_plz = true
-            for await (
-                const msg of myrelay.req([the_filter])
-            ) {
-                if (msg[0] === "EVENT") {
-                    if (msg[2].kind == 0) {
-                        let profile_json = undefined
-                        if (msg[2].kind == 0) {
-                            try {
-                                profile_json = JSON.parse(msg[2].content)
-                            } catch (error) {
-                                console.log("Could not parse profile_json")
-                                console.log(msg[2])
-                                console.log(error)
-                            }
-                        }
-                        // Check if account is added to events or not, if it is add everything
-                        console.log("PAUL_WAS_ALSO_HERE")
-                        console.log(selectedAccount)
-                        console.log(Object.keys(events))
-                        if (Object.keys(events).length == 0 ) {
-                            let obj = {
-                                [selectedAccount]: {
-                                    [`${msg[2].kind}`]: {
-                                        [msg[2].id]: {
-                                            profile_json: profile_json,
-                                            event: msg[2],
-                                            relays: [tmp_relay_url]
-                                        }
-                                    }
-                                }
-                            }
-                            console.log("THE_OBJ")
-                            console.log(obj)
-                            setEvents(obj)
-                            await new Promise(resolve => setTimeout(resolve, 500));
-                            we_set_it_continue_plz = true
-                        }
-                        console.log("LOOKING_INSIDE_AGAIN")
-                        console.log(Object.keys(events))
-                        if (!Object.keys(events).includes(selectedAccount)) {
-                            console.log("WHY_IS_THIS_SETTING")
-                            console.log(selectedAccount)
-                            console.log(Object.keys(events))
-                            setEvents((prevItems) => ({
-                                ...prevItems,
-                                [selectedAccount]: {
-                                    ...prevItems[selectedAccount],
-                                    [`${msg[2].kind}`]: {
-                                        [msg[2].id]: {
-                                            profile_json: profile_json,
-                                            event: msg[2],
-                                            relays: [tmp_relay_url]
-                                        }
-                                    }
-                                }
-                            }))
-                            await new Promise(resolve => setTimeout(resolve, 500));
-                            console.log("SET_INITAL_EVENTS")
-                            console.log(events)
-                        } else {
-                            // Check if the event_id exists or not
-                            if (!Object.keys(events[selectedAccount][`${msg[2].kind}`]).includes(`${msg[2].kind}`)) {
-                                // Check if relay is already in the list
-                                console.log("WAS_SET")
-                                if (!events[selectedAccount][`${msg[2].kind}`][msg[2].id].relays.includes(tmp_relay_url)) {
-                                    setEvents((prevItems) => ({
-                                        ...prevItems,
-                                        [selectedAccount]: {
-                                            ...prevItems[selectedAccount],
-                                            [`${msg[2].kind}`]: {
-                                                ...prevItems[selectedAccount][`${msg[2].kind}`],
-                                                [msg[2].id]: {
-                                                    ...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id],
-                                                    relays: [...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id].relays, tmp_relay_url]
-                                                }
-                                            }
-                                        },
-                                    }));
-                                    await new Promise(resolve => setTimeout(resolve, 500));
-                                    console.log("SET_OTHER_EVENTS")
-                                    console.log(events)
-                                }
-                            } else {
-                                console.log("NOT_SET")
-                                setEvents((prevItems) => ({
-                                    ...prevItems,
-                                    [selectedAccount]: {
-                                        ...prevItems[selectedAccount],
-                                        [`${msg[2].kind}`]: {
-                                            ...prevItems[selectedAccount][`${msg[2].kind}`],
-                                            [msg[2].id]: {
-                                                profile_json: profile_json,
-                                                event: msg[2],
-                                                relays: [...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id].relays, tmp_relay_url]
-                                            }
-                                        }
-                                    },
-                                }));
-                                await new Promise(resolve => setTimeout(resolve, 500));
-                                console.log("NOT_SET_EVENTS")
-                                console.log(events)
-                            }
+
+            for await (const msg of myrelay.req([the_filter])) {
+                if (msg[0] === "EVENT" && msg[2].kind === 0) {
+                    let profile_json;
+                    try {
+                        profile_json = JSON.parse(msg[2].content);
+                    } catch (error) {
+                        console.log("Could not parse profile_json", msg[2], error);
+                    }
+
+                    // Initialize account if not present
+                    if (!updatedEvents[selectedAccount]) {
+                        updatedEvents[selectedAccount] = {};
+                    }
+
+                    // Initialize kind if not present
+                    if (!updatedEvents[selectedAccount][msg[2].kind]) {
+                        updatedEvents[selectedAccount][msg[2].kind] = {};
+                    }
+
+                    // Update or add event
+                    if (!updatedEvents[selectedAccount][msg[2].kind][msg[2].id]) {
+                        // New event
+                        updatedEvents[selectedAccount][msg[2].kind][msg[2].id] = {
+                            profile_json,
+                            event: msg[2],
+                            relays: [tmp_relay_url],
+                        };
+                    } else {
+                        // Update existing event with new relay if not already included
+                        if (!updatedEvents[selectedAccount][msg[2].kind][msg[2].id].relays.includes(tmp_relay_url)) {
+                            updatedEvents[selectedAccount][msg[2].kind][msg[2].id].relays.push(tmp_relay_url);
                         }
                     }
+                    setEvents(updatedEvents)
                 }
-                if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
+                if (msg[0] === "EOSE") break; // Sends a CLOSE message to the relay
             }
-            myrelay.close()
+            myrelay.close();
         }
+
+        // Update state once after processing all relays
+        setEvents(updatedEvents);
+        console.log("Updated events:", updatedEvents);
     }
 
     const prevousPage = () => {
