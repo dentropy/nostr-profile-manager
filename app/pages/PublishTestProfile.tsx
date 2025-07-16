@@ -33,6 +33,7 @@ import { NSecSigner } from "@nostrify/nostrify";
 import { my_pool } from "~/relays";
 import { bytesToHex } from "nostr-tools/utils";
 import { Box } from "@mui/material";
+
 export function PublishTestProfile() {
     const [editEventId, setEventId] = useAtom(editProfileEventId)
     const [profiles, setProfiles] = useAtom(profileEvents)

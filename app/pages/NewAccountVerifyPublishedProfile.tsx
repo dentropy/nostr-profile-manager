@@ -22,7 +22,7 @@ import { NPool, NRelay1 } from "@nostrify/nostrify";
 import hljs from 'highlight.js';
 import 'highlight.js/styles/default.css';
 
-
+import { EditRelayList } from "~/components/EditRealyList";
 import { CodeBlock } from "~/components/CodeBlock";
 export default function NewAccountVerifyPublishedProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
@@ -33,61 +33,41 @@ export default function NewAccountVerifyPublishedProfile() {
     const [relayObj, setRealyObj] = useAtom(masterRelayList);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [events, setEvents] = React.useState({});
-    // hljs.registerLanguage('javascript', javascript);
-    // const highlightedCode = hljs.highlight(JSON.stringify(events, null, 2), { language: 'javascript' }).value
-
-
-
     async function checkRelays() {
         let the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
-
-        // console.log("RUNNING_THE_FILTER")
-        // console.log(accounts[selectedAccount]);
-        // console.log(accounts[selectedAccount].pubkey);
-        // console.log("the_filter");
-        // console.log(the_filter)
-        let theEventsObj = {}
+        console.log("THE_FILTER")
+        console.log(the_filter)
         for (const tmp_relay_url of relayObj.relay_url_list["testing"].urls) {
+            console.log(`relayObj.relay_url_list["testing"].urls`)
+            console.log(relayObj.relay_url_list["testing"].urls)
+            console.log(tmp_relay_url)
             const myrelay = new NRelay1(tmp_relay_url);
             console.log(`CheckingRelayNewAccount ${tmp_relay_url}`)
             await new Promise(resolve => setTimeout(resolve, 500));
+            let we_set_it_continue_plz = true
             for await (
                 const msg of myrelay.req([the_filter])
             ) {
                 if (msg[0] === "EVENT") {
-                    console.log("GOT_VERIFICATION_EVENT");
-                    console.log(msg[2]);
-                    console.log("SETTING_VERIFICATION_EVENT")
-                    console.log(events)
-                    console.log("theEventsObj")
-                    console.log(theEventsObj)
-                    console.log("Object.keys(events)")
-                    console.log(Object.keys(events))
-
-                    if (!Object.keys(theEventsObj).includes(selectedAccount)) {
-                        console.log("TRIED_SETTING")
-                        // setEvents((prevItems) => ({
-                        //     ...prevItems,
-                        //     [selectedAccount]: {
-                        //         ...prevItems[selectedAccount],
-                        //         [msg[2].id]: { event: msg[2], relays: [tmp_relay_url] }
-                        //     },
-                        // }))
+                    if (msg[2].kind == 0) {
                         let profile_json = undefined
                         if (msg[2].kind == 0) {
                             try {
                                 profile_json = JSON.parse(msg[2].content)
                             } catch (error) {
                                 console.log("Could not parse profile_json")
+                                console.log(msg[2])
                                 console.log(error)
                             }
                         }
-                        if (profile_json != undefined) {
-                            theEventsObj = {
-                                ...theEventsObj,
+                        // Check if account is added to events or not, if it is add everything
+                        console.log("PAUL_WAS_ALSO_HERE")
+                        console.log(selectedAccount)
+                        console.log(Object.keys(events))
+                        if (Object.keys(events).length == 0 ) {
+                            let obj = {
                                 [selectedAccount]: {
-                                    ...theEventsObj[selectedAccount],
-                                    [msg[2].kind]: {
+                                    [`${msg[2].kind}`]: {
                                         [msg[2].id]: {
                                             profile_json: profile_json,
                                             event: msg[2],
@@ -96,48 +76,77 @@ export default function NewAccountVerifyPublishedProfile() {
                                     }
                                 }
                             }
-                        } else {
-                            theEventsObj = {
-                                ...theEventsObj,
+                            console.log("THE_OBJ")
+                            console.log(obj)
+                            setEvents(obj)
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            we_set_it_continue_plz = true
+                        }
+                        console.log("LOOKING_INSIDE_AGAIN")
+                        console.log(Object.keys(events))
+                        if (!Object.keys(events).includes(selectedAccount)) {
+                            console.log("WHY_IS_THIS_SETTING")
+                            console.log(selectedAccount)
+                            console.log(Object.keys(events))
+                            setEvents((prevItems) => ({
+                                ...prevItems,
                                 [selectedAccount]: {
-                                    ...theEventsObj[selectedAccount],
-                                    [msg[2].kind]: {
+                                    ...prevItems[selectedAccount],
+                                    [`${msg[2].kind}`]: {
                                         [msg[2].id]: {
+                                            profile_json: profile_json,
                                             event: msg[2],
                                             relays: [tmp_relay_url]
                                         }
                                     }
                                 }
-                            }
-                        }
-                        setEvents(theEventsObj)
-                    } else {
-                        if (!theEventsObj[selectedAccount][msg[2].kind][msg[2].id].relays.includes(tmp_relay_url)) {
-                            console.log("TRIED_UPDATING")
-                            // setEvents((prevItems) => ({
-                            //     ...prevItems,
-                            //     [selectedAccount]: {
-                            //         ...prevItems[selectedAccount],
-                            //         [msg[2].id]: {
-                            //             ...prevItems[selectedAccount][msg[2].id],
-                            //             relays: [...prevItems[selectedAccount][msg[2].id].relays, tmp_relay_url]
-                            //         }
-                            //     }
-                            // }))
-                            theEventsObj = {
-                                ...theEventsObj,
-                                [selectedAccount]: {
-                                    ...theEventsObj[selectedAccount],
-                                    [msg[2].kind]: {
-                                        ...theEventsObj[selectedAccount][msg[2].kind],
-                                        [msg[2].id]: {
-                                            ...theEventsObj[selectedAccount][msg[2].kind][msg[2].id],
-                                            relays: [...theEventsObj[selectedAccount][msg[2].kind][msg[2].id].relays, tmp_relay_url]
+                            }))
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            console.log("SET_INITAL_EVENTS")
+                            console.log(events)
+                        } else {
+                            // Check if the event_id exists or not
+                            if (!Object.keys(events[selectedAccount][`${msg[2].kind}`]).includes(`${msg[2].kind}`)) {
+                                // Check if relay is already in the list
+                                console.log("WAS_SET")
+                                if (!events[selectedAccount][`${msg[2].kind}`][msg[2].id].relays.includes(tmp_relay_url)) {
+                                    setEvents((prevItems) => ({
+                                        ...prevItems,
+                                        [selectedAccount]: {
+                                            ...prevItems[selectedAccount],
+                                            [`${msg[2].kind}`]: {
+                                                ...prevItems[selectedAccount][`${msg[2].kind}`],
+                                                [msg[2].id]: {
+                                                    ...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id],
+                                                    relays: [...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id].relays, tmp_relay_url]
+                                                }
+                                            }
+                                        },
+                                    }));
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+                                    console.log("SET_OTHER_EVENTS")
+                                    console.log(events)
+                                }
+                            } else {
+                                console.log("NOT_SET")
+                                setEvents((prevItems) => ({
+                                    ...prevItems,
+                                    [selectedAccount]: {
+                                        ...prevItems[selectedAccount],
+                                        [`${msg[2].kind}`]: {
+                                            ...prevItems[selectedAccount][`${msg[2].kind}`],
+                                            [msg[2].id]: {
+                                                profile_json: profile_json,
+                                                event: msg[2],
+                                                relays: [...prevItems[selectedAccount][`${msg[2].kind}`][msg[2].id].relays, tmp_relay_url]
+                                            }
                                         }
-                                    }
-                                },
+                                    },
+                                }));
+                                await new Promise(resolve => setTimeout(resolve, 500));
+                                console.log("NOT_SET_EVENTS")
+                                console.log(events)
                             }
-                            setEvents(theEventsObj)
                         }
                     }
                 }
@@ -155,20 +164,40 @@ export default function NewAccountVerifyPublishedProfile() {
     };
 
     React.useEffect(() => {
+        console.log("PAUL_WAS_HERE_123123123123123123")
         checkRelays();
     }, []);
     return (
         <>
-            <h1>Verify Your Nostr Profile Was Published Sucessfully</h1>
+            <Typography
+                variant="h2"
+                style={{ textAlign: "left", display: "flex" }}
+            >
+                Verify Your Nostr Profile Was Published Sucessfully
+            </Typography>
+            <Typography
+                variant="h3"
+                style={{ textAlign: "left", display: "flex" }}
+            >
+                Relays We Are Searching
+            </Typography>
+            <Box>
+                <EditRelayList></EditRelayList>
+            </Box>
 
-            <SyntaxHighlighter language="json" style={docco}>
-                {JSON.stringify(relayObj, null, 2)}
-            </SyntaxHighlighter>
-
-
-            <SyntaxHighlighter language="json" style={docco}>
+            {/* <SyntaxHighlighter language="json" style={docco}>
                 {JSON.stringify(accounts, null, 2)}
-            </SyntaxHighlighter>
+            </SyntaxHighlighter> */}
+            <Box sx={{
+                maxWidth: "100%", // Ensure container doesn't exceed parent width
+                overflowX: "auto", // Enable horizontal scrolling for overflow
+                padding: "10px",
+                boxSizing: "border-box", // Prevent padding from causing overflow
+            }}>
+                <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                    {JSON.stringify(accounts, null, 2)}
+                </pre>
+            </Box>
 
             <Box sx={{
                 maxWidth: "100%", // Ensure container doesn't exceed parent width
@@ -177,7 +206,7 @@ export default function NewAccountVerifyPublishedProfile() {
                 boxSizing: "border-box", // Prevent padding from causing overflow
             }}>
                 <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                    {JSON.stringify(events[selectedAccount], null, 2)}
+                    {JSON.stringify(events, null, 2)}
                 </pre>
             </Box>
 
