@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { appPageAtom } from "~/jotaiAtoms";
+import { appPageAtom, selectedAccountAtom } from "~/jotaiAtoms";
 
 import EditNostrProfile from "~/components/EditNostrProfile";
 import { Button } from "@mui/material";
@@ -16,16 +16,6 @@ import { useState } from "react";
 import { bytesToHex } from "nostr-tools/utils";
 import { accountsAtom } from "~/jotaiAtoms";
 
-import { rxReq } from "~/index";
-
-// import { myrelay } from "~/relays";
-// import { verifier } from "@rx-nostr/crypto";
-// import { createRxForwardReq, createRxNostr } from "rx-nostr";
-// import { DEFAULT_USERMETA_RELAYS } from "~/relays";
-// export const rxReq = createRxForwardReq();
-// export const rxNostr = createRxNostr({ verifier });
-// rxNostr.setDefaultRelays(DEFAULT_USERMETA_RELAYS);
-
 const style = {
     color: "black",
     position: "absolute",
@@ -41,6 +31,7 @@ const style = {
 export default function ExistingAccountNSEC() {
     const [nsecValid, setNSECValid] = React.useState(true);
     const [accounts, setAccounts] = useAtom(accountsAtom);
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [nsec, setNSEC] = React.useState("");
     const onNSECChange = (event: any) => {
         try {
@@ -56,34 +47,32 @@ export default function ExistingAccountNSEC() {
         setAppPage({ page: "Add Account" });
     };
     const nextPage = () => {
-        setAppPage({ page: "Fetching Profile Page" });
+        setAppPage({ page: "New Account Verify Published Profile" });
     };
     const addAccount = () => {
-        let accountsData = [
+        
+        let accountsData =
             {
                 nsec,
                 npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-                privkey: nip19.decode(nsec).data,
+                privkey: bytesToHex(nip19.decode(nsec).data),
                 pubkey: getPublicKey(nip19.decode(nsec).data),
-            },
-        ];
-        console.log("EMIT THE DATA PLZ");
-        console.log(accountsData[0]);
-        console.log(accountsData[0].pubkey);
-        let filter = {
-            kinds: [0],
-            authors: [accountsData[0].pubkey],
-        };
-        filter = { kinds: [1], limit: 5 };
-        console.log(filter);
-        console.log(rxReq);
-        async function fetchData() {
-            for await (const msg of myrelay.req([filter])) {
-                if (msg[0] === "EVENT") console.log(msg[2]);
-                if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
+                secretKey: nip19.decode(nsec).data
             }
-        }
-        fetchData();
+        console.log("accountsData")
+        console.log(accountsData)
+        setAccounts((prevItems) => ({
+            ...prevItems,
+            [accountsData.pubkey]: accountsData
+        }))
+        setSelectedAccount(accountsData.pubkey)
+        // async function fetchData() {
+        //     for await (const msg of myrelay.req([filter])) {
+        //         if (msg[0] === "EVENT") console.log(msg[2]);
+        //         if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
+        //     }
+        // }
+        // fetchData();
     };
 
     return (

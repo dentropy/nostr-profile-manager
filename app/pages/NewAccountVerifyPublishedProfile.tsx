@@ -11,28 +11,29 @@ import {
     selectedAccountAtom
 } from "~/jotaiAtoms";
 
-import { my_pool } from "~/relays";
-
 import { Box, Button, Typography } from "@mui/material";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
 import { NPool, NRelay1 } from "@nostrify/nostrify";
 
-import hljs from 'highlight.js';
-import 'highlight.js/styles/default.css';
-
+import { DisplayProfileEvent } from "~/components/DisplayProfileEvent";
 import { EditRelayList } from "~/components/EditRealyList";
-import { CodeBlock } from "~/components/CodeBlock";
+
+import NostrAccountData from "~/components/NostrAccountData";
 export default function NewAccountVerifyPublishedProfile() {
-    const [appPage, setAppPage] = useAtom(appPageAtom);
-    const [editEventId, setEventId] = useAtom(editProfileEventId);
-    const [profiles, setProfiles] = useAtom(profileEvents);
-    const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [profileJson, setProfileJson] = useAtom(EditProfileJson);
-    const [relayObj, setRealyObj] = useAtom(masterRelayList);
-    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
-    const [events, setEvents] = React.useState({});
+    const [appPage, setAppPage] = useAtom(appPageAtom)
+    const [editEventId, setEventId] = useAtom(editProfileEventId)
+    const [profiles, setProfiles] = useAtom(profileEvents)
+    const [accounts, setAccounts] = useAtom(accountsAtom)
+    const [profileJson, setProfileJson] = useAtom(EditProfileJson)
+    const [relayObj, setRealyObj] = useAtom(masterRelayList)
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom)
+    const [events, setEvents] = useAtom(profileEvents)// React.useState({});
+
+    const [renderProfileEvent, setRenderProileEvents] = React.useState(false)
+
     async function checkRelays() {
         const the_filter = { authors: [accounts[selectedAccount].pubkey], kinds: [0] };
         console.log("THE_FILTER", the_filter);
@@ -98,9 +99,19 @@ export default function NewAccountVerifyPublishedProfile() {
     };
 
     React.useEffect(() => {
-        console.log("PAUL_WAS_HERE_123123123123123123")
         checkRelays();
     }, []);
+
+    React.useEffect(() => {
+        try {
+            if (Object.keys(events[selectedAccount][0]).length > 0) {
+                setRenderProileEvents(true)
+            }
+        } catch (error) {
+
+        }
+    }, [events]);
+
     return (
         <>
             <Typography
@@ -115,45 +126,41 @@ export default function NewAccountVerifyPublishedProfile() {
             >
                 Relays We Are Searching
             </Typography>
+
             <Box>
                 <EditRelayList></EditRelayList>
             </Box>
 
-            {/* <SyntaxHighlighter language="json" style={docco}>
-                {JSON.stringify(accounts, null, 2)}
-            </SyntaxHighlighter> */}
-            <Box sx={{
-                maxWidth: "100%", // Ensure container doesn't exceed parent width
-                overflowX: "auto", // Enable horizontal scrolling for overflow
-                padding: "10px",
-                boxSizing: "border-box", // Prevent padding from causing overflow
-            }}>
-                <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                    {JSON.stringify(accounts, null, 2)}
-                </pre>
-            </Box>
-
-            <Box sx={{
-                maxWidth: "100%", // Ensure container doesn't exceed parent width
-                overflowX: "auto", // Enable horizontal scrolling for overflow
-                padding: "10px",
-                boxSizing: "border-box", // Prevent padding from causing overflow
-            }}>
-                <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                    {JSON.stringify(events, null, 2)}
-                </pre>
-            </Box>
-
-
             <Button variant="contained" onClick={checkRelays}>
+                Check Relays
+            </Button>
+            <Box>
+                <NostrAccountData
+                    mnemonic={accounts[selectedAccount].mnemonic}
+                    pubkey={accounts[selectedAccount].pubkey}
+                    privkey={accounts[selectedAccount].privkey}
+                    npub={accounts[selectedAccount].npub}
+                    nsec={accounts[selectedAccount].nsec}
+                ></NostrAccountData>
+            </Box>
+
+            {renderProfileEvent ? (
+                <>
+                    {Object.keys(events[selectedAccount][0]).map(item => (
+                        <DisplayProfileEvent event_id={item}></DisplayProfileEvent>
+                    ))}
+                </>
+
+            ) : (
+                <h1>Looking for Events {selectedAccount} {JSON.stringify(events[selectedAccount])}</h1>
+            )}
+
+            <Button variant="contained" onClick={() => { checkRelays }}>
                 Check Relays
             </Button>
 
             <Button variant="contained" onClick={prevousPage}>
                 Previouis: New Account Profile
-            </Button>
-            <Button variant="contained" onClick={nextPage}>
-                Next: New Account Publish Profile
             </Button>
         </>
     );

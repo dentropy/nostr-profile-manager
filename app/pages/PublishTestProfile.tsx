@@ -105,10 +105,6 @@ export function PublishTestProfile() {
 
     const publishProfile = async () => {
         let nip65_tags = [];
-        console.log("PAUL_WAS_HERE_FOR_URLS")
-        console.log(relayGroup)
-        console.log(relayObj)
-        console.log(relayObj.relay_url_list[relayGroup].urls)
         for (const relay of relayObj.relay_url_list[relayGroup].urls) {
             nip65_tags.push(["r", relay]);
         }
@@ -131,25 +127,71 @@ export function PublishTestProfile() {
         console.log(nip65Event);
         my_pool.event(profileEvent, { relays: DEFAULT_TESTING_RELAYS });
         my_pool.event(nip65Event, { relays: DEFAULT_TESTING_RELAYS });
-    };
+    }
 
     const nextPage = () => {
         setAppPage({ page: "New Account Verify Published Profile" });
+    }
+    const [tmpAccount, setTmpAccount] = React.useState({
+        mnemonic: "PLACEHOLDER",
+        nsec: "PLACEHOLDER",
+        npub: "PLACEHOLDER",
+        privkey: "PLACEHOLDER",
+        pubkey: "PLACEHOLDER",
+        secretKey: "PLACEHOLDER"
+    })
+    const addAccount = () => {
+        if (selectedAccount != undefined && selectedAccount.length != 0) {
+            setTmpAccount(accounts[selectedAccount])
+        } else {
+            let mnemonic = generateSeedWords()
+            let secretKey = privateKeyFromSeedWords(mnemonic, "", 0)
+            let nsec = nip19.nsecEncode(secretKey)
+            let publicKey = getPublicKey(secretKey)
+            let npub = nip19.npubEncode(publicKey)
+            let pubkey = getPublicKey(nip19.decode(nsec).data)
+            let account_data = {
+                mnemonic: mnemonic,
+                nsec: nsec,
+                npub: npub,
+                privkey: bytesToHex(nip19.decode(nsec).data),
+                pubkey: getPublicKey(nip19.decode(nsec).data),
+                secretKey: secretKey
+            }
+            setTmpAccount(account_data)
+            setAccounts((prevState) => ({
+                ...prevState, // Spread the previous state to keep other keys
+                [pubkey]: account_data,
+            }))
+            setSelectedAccount(pubkey)
+            let profileData: any = {}
+            profileData[pubkey] = { "json_content": {} }
+            setProfiles(profileData)
+            setEventId(pubkey)
+        }
     };
-
+    React.useEffect(() => {
+        addAccount()
+    }, [])
     return (
         <>
             <Typography
-                variant="h2"
+                variant="h3"
                 style={{ textAlign: "left", display: "flex" }}
             >
-                Your Keys<br></br>
+                Your Test Nostr Account Keys<br></br>
             </Typography>
             <Box>
-                <NostrAccountData></NostrAccountData>
+                <NostrAccountData
+                    mnemonic={tmpAccount.mnemonic}
+                    pubkey={tmpAccount.pubkey}
+                    privkey={tmpAccount.privkey}
+                    npub={tmpAccount.npub}
+                    nsec={tmpAccount.nsec}
+                ></NostrAccountData>
             </Box>
             <Typography
-                variant="h2"
+                variant="h3"
                 style={{ textAlign: "left", display: "flex" }}
             >
                 Your Selected Relays for Testing<br></br>
@@ -165,7 +207,7 @@ export function PublishTestProfile() {
                 <EditRelayList></EditRelayList>
             </Box>
             <Typography
-                variant="h2"
+                variant="h3"
                 style={{ textAlign: "left", display: "flex" }}
             >
                 Edit Your Test Profile Info<br></br>

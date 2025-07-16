@@ -6,7 +6,8 @@ import {
     EditProfileJson,
     profileEvents,
     masterRelayList,
-    selectedAccountAtom
+    selectedAccountAtom,
+    selectedRelayGroup
 } from "~/jotaiAtoms";
 
 import { NSecSigner, NRelay1 } from '@nostrify/nostrify';
@@ -23,9 +24,8 @@ export default function NewAccountPublishProfile() {
     const [profileJson, setProfileJson] = useAtom(EditProfileJson);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [relayObj, setRealyObj] = useAtom(masterRelayList);
-    // Publish the Profile Event to the Relays
-    // Publish the NIP-65 Event to the Relays
     const [appPage, setAppPage] = useAtom(appPageAtom);
+    const [relayGroup, setRelayGroup] = useAtom(selectedRelayGroup);
     const prevousPage = () => {
         setAppPage({ page: "New Account Relays" });
     };
@@ -38,10 +38,6 @@ export default function NewAccountPublishProfile() {
             nip65_tags.push(["r", relay]);
         }
         let unix_time = Math.floor((new Date()).getTime() / 1000);
-        console.log("LOOKING_AT_ACCOUNTS")
-        console.log(accounts)
-        console.log(selectedAccount)
-        console.log(accounts[selectedAccount])
         const signer = new NSecSigner(accounts[selectedAccount].privkey);
         const profileEvent = await signer.signEvent({ 
             kind: 0, 
@@ -55,11 +51,8 @@ export default function NewAccountPublishProfile() {
             tags: nip65_tags,
             created_at: unix_time
         });
-        console.log(profileEvent);
-        console.log(nip65Event);
-        my_pool.event(profileEvent, {relays: selectedRelays})
-        my_pool.event(nip65Event, {relays: selectedRelays})
-        console.log("SHOULD_HAVE_PUBLISHED_PROFILE")
+        my_pool.event(profileEvent, {relays: relayObj.relay_url_list[relayGroup].urls})
+        my_pool.event(nip65Event, {relays: relayObj.relay_url_list[relayGroup].urls})
     };
     return (
         <>

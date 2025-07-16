@@ -106,67 +106,6 @@ export function CreateDevNostrAccount() {
         aria-describedby="modal-modal-description"
       >
         <NostrAccountData />
-        {/* <Box sx={style}>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick(mnemonic);
-            }}
-          >
-            ⎘Mnemonic: <br></br> {mnemonic}
-          </Typography>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick(nsec);
-            }}
-          >
-            ⎘NSEC: <br></br>{nsec}
-          </Typography>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick(npub);
-            }}
-          >
-            ⎘NPUB: <br></br> {npub}
-          </Typography>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick(bytesToHex(secretKey));
-            }}
-          >
-            ⎘Hex Secret Key: <br></br> {bytesToHex(secretKey)}
-          </Typography>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick(publicKey);
-            }}
-          >
-            ⎘Hex Public Key: <br></br>{publicKey}
-          </Typography>
-          <Button             onClick={(e) => {
-              e.preventDefault();
-              handleClick(JSON.stringify({mnemonic: mnemonic, nsec: nsec, npub: npub, publicKey: publicKey, secretKey: bytesToHex(secretKey)},null, 2));
-            }}>Copy Everything as JSON</Button>
-        </Box> */}
       </Modal>
     </>
   );

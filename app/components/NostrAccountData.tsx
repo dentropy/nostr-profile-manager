@@ -35,48 +35,49 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-export default function NostrAccountData() {
+export default function NostrAccountData({ mnemonic, pubkey, nsec, npub, privkey}) {
     const [snackBarOpen, setSnackBarOpen] = React.useState(false);
     const [snackBarText, setSnackBarText] = React.useState("");
-    const [mnemonic, setMnemonic] = React.useState(generateSeedWords());
+    // const [mnemonic, setMnemonic] = React.useState(generateSeedWords());
     const mnemonic_validation = validateWords(mnemonic);
-    const [secretKey, setSecretKey] = React.useState(
-        privateKeyFromSeedWords(mnemonic, "", 0),
-    );
-    const [publicKey, setPublicKey] = React.useState(getPublicKey(secretKey));
-    const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
-    const [npub, setNpub] = React.useState(nip19.npubEncode(publicKey));
-    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
+    // const [secretKey, setSecretKey] = React.useState(
+    //     privateKeyFromSeedWords(mnemonic, "", 0),
+    // );
+    // const [pubkey, setpubkey] = React.useState(getpubkey(secretKey));
+    // const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
+    // const [npub, setNpub] = React.useState(nip19.npubEncode(pubkey));
+    // const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
 
     const handleClick = (save_to_clipboard) => {
-        console.log("TEST_FROM_DENT");
-        console.log(save_to_clipboard);
         navigator.clipboard.writeText(save_to_clipboard);
-        addAccount()
+        // addAccount()
         setSnackBarText(`Copied "${save_to_clipboard}"`);
         setSnackBarOpen(true);
     };
 
-    const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [profiles, setProfiles] = useAtom(profileEvents)
-    const [editEventId, setEventId] = useAtom(editProfileEventId)
-    const addAccount = () => {
-        let pubkey = getPublicKey(nip19.decode(nsec).data)
-        setAccounts((prevState) => ({
-            ...prevState, // Spread the previous state to keep other keys
-            [pubkey]: {
-                nsec,
-                npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-                privkey: bytesToHex(nip19.decode(nsec).data),
-                pubkey: getPublicKey(nip19.decode(nsec).data),
-            },
-        }))
-        setSelectedAccount(getPublicKey(nip19.decode(nsec).data))
-        let profileData = {}
-        profileData[pubkey] = { "JsonContent": {} }
-        setProfiles(profileData)
-        setEventId(pubkey)
-    };
+    // const [accounts, setAccounts] = useAtom(accountsAtom);
+    // const [profiles, setProfiles] = useAtom(profileEvents)
+    //     let profileData = {}
+    //     profileData[pubkey] = { "JsonContent": {} }
+    //     setProfiles(profileData)
+    // const [editEventId, setEventId] = useAtom(editProfileEventId)
+    // const addAccount = () => {
+    //     let pubkey = getpubkey(nip19.decode(nsec).data)
+    //     setAccounts((prevState) => ({
+    //         ...prevState, // Spread the previous state to keep other keys
+    //         [pubkey]: {
+    //             nsec,
+    //             npub: nip19.npubEncode(getpubkey(nip19.decode(nsec).data)),
+    //             privkey: bytesToHex(nip19.decode(nsec).data),
+    //             pubkey: getpubkey(nip19.decode(nsec).data),
+    //         },
+    //     }))
+    //     setSelectedAccount(getpubkey(nip19.decode(nsec).data))
+        // let profileData = {}
+        // profileData[pubkey] = { "JsonContent": {} }
+        // setProfiles(profileData)
+        // setEventId(pubkey)
+    // };
     return (
         <Box sx={style}>
             <Typography
@@ -119,10 +120,10 @@ export default function NostrAccountData() {
                 component="h2"
                 onClick={(e) => {
                     e.preventDefault();
-                    handleClick(bytesToHex(secretKey));
+                    handleClick(privkey);
                 }}
             >
-                ⎘Hex Secret Key: <br></br> {bytesToHex(secretKey)}
+                ⎘Hex Secret Key: <br></br> {privkey}
             </Typography>
             <Typography
                 id="modal-modal-title"
@@ -130,11 +131,11 @@ export default function NostrAccountData() {
                 component="h2"
                 onClick={(e) => {
                     e.preventDefault();
-                    handleClick(publicKey);
+                    handleClick(pubkey);
                 }}
             >
                 ⎘Hex Public Key: <br></br>
-                {publicKey}
+                {pubkey}
             </Typography>
             <Button
                 onClick={(e) => {
@@ -145,8 +146,9 @@ export default function NostrAccountData() {
                                 mnemonic: mnemonic,
                                 nsec: nsec,
                                 npub: npub,
-                                publicKey: publicKey,
-                                secretKey: bytesToHex(secretKey),
+                                pubkey: pubkey,
+                                privkey: privkey,
+                                secretKey: privkey,
                             },
                             null,
                             2,

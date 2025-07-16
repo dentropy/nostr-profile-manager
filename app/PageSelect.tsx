@@ -2,11 +2,9 @@ import { useAtom } from "jotai";
 import { appPageAtom } from "~/jotaiAtoms";
 
 import AddNostrAccount from "./components/addNostrAccount";
-import EditNostrProfile from "./components/EditNostrProfile";
 import NostrProfiles from "./pages/nostrProfiles";
 import { RebroadcastPage } from "./pages/rebroadcastPage";
 import { RelayPage } from "./pages/RelayPage";
-import NostrAppBar from "./components/NostrAppBar";
 import NewAccountProfile from "./pages/NewAccountProfile";
 import NewAccountKeys from "./pages/NewAccountKeys";
 import NewAccountRelays from "./pages/NewAccountRelays";
