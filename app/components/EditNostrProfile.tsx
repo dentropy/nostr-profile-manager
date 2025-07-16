@@ -18,38 +18,14 @@ import {
 } from "nostr-tools";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { JsonEditor } from "json-edit-react";
-
-const style = {
-    color: "black",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80%",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-};
-import { seckeySigner, verifier } from "@rx-nostr/crypto";
-import { ToggleRelayList } from "./selectRelays";
 import {
     EditProfileJson,
-    ProfileJsonData,
-    relayListAtom,
-    relayWebSocketsAtom,
-    selectedRelayListAtom,
-    selectedAccountAtom
 } from "~/jotaiAtoms";
 
 import { rxNostr } from "~/index";
 export default function EditNostrProfile() {
     const [editEventId, setEventId] = useAtom(editProfileEventId);
     const [profiles, setProfiles] = useAtom(profileEvents);
-    const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
-    const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom);
-  const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     let project_content = Object.assign({}, profiles[editEventId].json_content);
     let minimumProfileKeys = [
         "name",
@@ -67,20 +43,6 @@ export default function EditNostrProfile() {
     });
     const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson);
 
-    async function publishEvents() {
-        let result = rxNostr.send(
-            {
-                kind: 0,
-                content: JSON.stringify(profileJsonData),
-            },
-            {
-                relays: selectedRelays,
-                signer: seckeySigner(accounts[selectedAccount].nsec),
-            },
-        );
-        console.log("publishEvents");
-        console.log(result);
-    }
     return (
         <>
             <Typography

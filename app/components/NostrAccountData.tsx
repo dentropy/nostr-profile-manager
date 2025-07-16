@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { accountsAtom, appPageAtom, editProfileEventId, profileEvents } from "~/jotaiAtoms";
+import { accountsAtom, appPageAtom, editProfileEventId, profileEvents, selectedAccountAtom } from "~/jotaiAtoms";
 
 import * as React from "react";
 
@@ -22,6 +22,7 @@ import {
 } from "nostr-tools/nip06";
 
 import { bytesToHex } from "nostr-tools/utils";
+
 const style = {
     color: "black",
     // position: "absolute",
@@ -45,6 +46,7 @@ export default function NostrAccountData() {
     const [publicKey, setPublicKey] = React.useState(getPublicKey(secretKey));
     const [nsec, setNsec] = React.useState(nip19.nsecEncode(secretKey));
     const [npub, setNpub] = React.useState(nip19.npubEncode(publicKey));
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
 
     const handleClick = (save_to_clipboard) => {
         console.log("TEST_FROM_DENT");
@@ -68,15 +70,8 @@ export default function NostrAccountData() {
                 privkey: bytesToHex(nip19.decode(nsec).data),
                 pubkey: getPublicKey(nip19.decode(nsec).data),
             },
-        }));
-        // setAccounts([
-        //     {
-        //         nsec,
-        //         npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
-        //         privkey: nip19.decode(nsec).data,
-        //         pubkey: getPublicKey(nip19.decode(nsec).data),
-        //     },
-        // ]);
+        }))
+        setSelectedAccount(getPublicKey(nip19.decode(nsec).data))
         let profileData = {}
         profileData[pubkey] = { "JsonContent": {} }
         setProfiles(profileData)

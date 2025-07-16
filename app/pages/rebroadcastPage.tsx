@@ -3,21 +3,19 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useAtom } from "jotai";
-import { editProfileEventId, accountsAtom, profileEvents, selectedRelayListAtom, relayWebSocketsAtom } from "~/jotaiAtoms";
+import { editProfileEventId, accountsAtom, profileEvents, masterRelayList } from "~/jotaiAtoms";
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import { rxNostr } from "~/index"
 
-import { ToggleRelayList } from "~/components/selectRelays";
+import { ToggleRelayList } from "~/components/ToggleRelayList";
 export function RebroadcastPage() {
     const [editEventId, setEventId] = useAtom(editProfileEventId)
     const [profiles, setProfiles] = useAtom(profileEvents)
     const [accounts, setAccounts] = useAtom(accountsAtom)
-    const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
-    const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom);
-
+    const [relayObj, setRealyObj] = useAtom(masterRelayList);
     let project_content = Object.assign({}, profiles[editEventId].ui_data.json_content);
     let minimumProfileKeys = [
         'name',
@@ -39,7 +37,7 @@ export function RebroadcastPage() {
         let result = rxNostr.send(
             profiles[editEventId].raw_event,
             {
-                relays: selectedRelays
+                relays: relayObj.relay_url_list["default"].urls
             }
         )
         console.log("publishEvents")

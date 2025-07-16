@@ -8,82 +8,72 @@ import {
     appPageAtom,
     editProfileEventId,
     EditProfileJson,
-    NIP33Data,
+    masterRelayList,
     profileEvents,
     relayWebSocketsAtom,
-    selectedRelayListAtom,
-    masterRelayList,
-    selectedAccountAtom
+    selectedAccountAtom,
+    selectedRelayGroup
 } from "~/jotaiAtoms";
 import { faker } from "@faker-js/faker";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
-
+import { EditRelayList } from "~/components/EditRealyList";
 import EditNostrProfile from "~/components/EditNostrProfile";
 import { JsonEditor } from "json-edit-react";
-
+import NostrAccountData from "~/components/NostrAccountData";
 import {
     generateSeedWords,
     privateKeyFromSeedWords,
     validateWords,
 } from "nostr-tools/nip06";
 import { generateSecretKey, getPublicKey, nip19 } from "nostr-tools";
-// import { rxReq } from "~/pages/index"
-// import { verifier } from "@rx-nostr/crypto";
-// import { createRxForwardReq, createRxNostr } from "rx-nostr";
-// export const rxNostr = createRxNostr({ verifier });
-
 import { DEFAULT_TESTING_RELAYS } from "~/relays";
-
-import { ToggleRelayList } from "~/components/selectRelays";
 import { NSecSigner } from "@nostrify/nostrify";
-
 import { my_pool } from "~/relays";
 import { bytesToHex } from "nostr-tools/utils";
+import { Box } from "@mui/material";
 export function PublishTestProfile() {
-    const [editEventId, setEventId] = useAtom(editProfileEventId);
-    const [profiles, setProfiles] = useAtom(profileEvents);
-    const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
-    const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom);
-    const [nip33Data, setNIP33Data] = useAtom(NIP33Data);
-    const [appPage, setAppPage] = useAtom(appPageAtom);
-    const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson);
-    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
-    const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
-
+    const [editEventId, setEventId] = useAtom(editProfileEventId)
+    const [profiles, setProfiles] = useAtom(profileEvents)
+    const [accounts, setAccounts] = useAtom(accountsAtom)
+    const [relayObj, setRealyObj] = useAtom(masterRelayList)
+    const [relayWebSockets, setRelayWebSockets] = useAtom(relayWebSocketsAtom)
+    const [appPage, setAppPage] = useAtom(appPageAtom)
+    const [profileJsonData, setProfileJsonData] = useAtom(EditProfileJson)
+    const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom)
+    const [relayGroup, setRelayGroup] = useAtom(selectedRelayGroup);
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     React.useEffect(() => {
-        console.log("CHECKING_FOR_ACCOUNTS")
+        console.log("CHECKING_FOR_ACCOUNTS");
         if (Object.keys(accounts).length == 0) {
-            console.log("GENERATING_ACCOUNT")
+            console.log("GENERATING_ACCOUNT");
             const mnemonic = generateSeedWords();
             const secretKey = privateKeyFromSeedWords(mnemonic, "", 0);
             const pubkey = getPublicKey(secretKey);
             const npub = nip19.nsecEncode(secretKey);
             const nsec = nip19.npubEncode(pubkey);
-            const privkey = bytesToHex(secretKey)
+            const privkey = bytesToHex(secretKey);
             const account_data = {
                 mnemonic: mnemonic,
                 nsec: nsec,
                 npub: npub,
                 privkey: privkey,
                 pubkey: pubkey,
-            }
-            console.log("SETTING_THE_ACCOUNTS")
-            setSelectedAccount(pubkey)
+            };
+            console.log("SETTING_THE_ACCOUNTS");
+            setSelectedAccount(pubkey);
             setAccounts((prevItems) => ({
                 ...prevItems, // Spread existing items
                 [pubkey]: account_data,
             }));
-            console.log("SHOULD_HAVE_SET_THE_ACCOUNTS")
-
+            console.log("SHOULD_HAVE_SET_THE_ACCOUNTS");
         }
         // Set the Relays
-        setSelectedRelays(DEFAULT_TESTING_RELAYS);
-        my_pool.group(DEFAULT_TESTING_RELAYS);
+
+        // setSelectedRelays(DEFAULT_TESTING_RELAYS);
+        my_pool.group(relayObj.relay_url_list[relayGroup].urls);
 
         // Set the test account
         const username = faker.internet.username();
@@ -114,57 +104,77 @@ export function PublishTestProfile() {
 
     const publishProfile = async () => {
         let nip65_tags = [];
-        for (const relay of selectedRelays) {
+        console.log("PAUL_WAS_HERE_FOR_URLS")
+        console.log(relayGroup)
+        console.log(relayObj)
+        console.log(relayObj.relay_url_list[relayGroup].urls)
+        for (const relay of relayObj.relay_url_list[relayGroup].urls) {
             nip65_tags.push(["r", relay]);
         }
         let unix_time = Math.floor((new Date()).getTime() / 1000);
         const signer = new NSecSigner(accounts[selectedAccount].privkey);
-        const profileEvent = await signer.signEvent({ 
-            kind: 0, 
+        const profileEvent = await signer.signEvent({
+            kind: 0,
             content: JSON.stringify(profileJsonData),
             tags: [],
-            created_at: unix_time 
-        })
-        let nip65Event = await signer.signEvent({ 
+            created_at: unix_time,
+        });
+        let nip65Event = await signer.signEvent({
             kind: 10002,
             content: "",
             tags: nip65_tags,
-            created_at: unix_time
+            created_at: unix_time,
         });
-        console.log("Here are our events")
+        console.log("Here are our events");
         console.log(profileEvent);
         console.log(nip65Event);
-        my_pool.event(profileEvent, {relays: DEFAULT_TESTING_RELAYS})
-        my_pool.event(nip65Event, {relays: DEFAULT_TESTING_RELAYS})
+        my_pool.event(profileEvent, { relays: DEFAULT_TESTING_RELAYS });
+        my_pool.event(nip65Event, { relays: DEFAULT_TESTING_RELAYS });
     };
 
     const nextPage = () => {
-        setAppPage({ page: "New Account Verify Published Profile" })
+        setAppPage({ page: "New Account Verify Published Profile" });
     };
 
     return (
         <>
             <Typography
-                variant="body3"
+                variant="h2"
                 style={{ textAlign: "left", display: "flex" }}
             >
-                Your Selected Relays<br></br>
+                Your Keys<br></br>
             </Typography>
-            <SyntaxHighlighter language="json" style={docco}>
-                {JSON.stringify(DEFAULT_TESTING_RELAYS, null, 2)}
-            </SyntaxHighlighter>
-
+            <Box>
+                <NostrAccountData></NostrAccountData>
+            </Box>
             <Typography
-                variant="body3"
+                variant="h2"
+                style={{ textAlign: "left", display: "flex" }}
+            >
+                Your Selected Relays for Testing<br></br>
+            </Typography>
+            <Box>
+                {/*
+                    We need to be able to add and remove relays from the list
+                    And reset to Default if we want
+                */}
+                {/* <SyntaxHighlighter language="json" style={docco}>
+                    {JSON.stringify(relayObj.relay_url_list["testing"].urls, null, 2)}
+                </SyntaxHighlighter> */}
+                <EditRelayList></EditRelayList>
+            </Box>
+            <Typography
+                variant="h2"
                 style={{ textAlign: "left", display: "flex" }}
             >
                 Edit Your Test Profile Info<br></br>
             </Typography>
-            <JsonEditor
-                data={profileJsonData}
-                setData={setProfileJsonData}
-            />
-
+            <Box>
+                <JsonEditor
+                    data={profileJsonData}
+                    setData={setProfileJsonData}
+                />
+            </Box>
             <Button variant="contained" onClick={publishProfile}>
                 Publish Your Profile
             </Button>

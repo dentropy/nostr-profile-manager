@@ -5,9 +5,10 @@ import { Box } from "@mui/material";
 import { CreateDevNostrAccount } from "../modals/createDevNostrAccountModal";
 import { MnemonicModal } from "../modals/mnemonicmodal";
 import { NSECModal } from "../modals/nsecmodal";
-import { ToggleRelayList } from "./selectRelays";
+import { ToggleRelayList } from "./ToggleRelayList";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+
 export default function AddNostrAccount() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
   const selectNewAccount = () => {
@@ -32,7 +33,7 @@ export default function AddNostrAccount() {
         variant="contained"
         onClick={selectNewAccount}
       >
-        Login via NSEC or privkey
+        Create a New Account
       </Button>
       <Typography
         variant="h3"

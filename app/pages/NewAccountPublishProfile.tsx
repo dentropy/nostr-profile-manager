@@ -5,7 +5,7 @@ import {
     editProfileEventId,
     EditProfileJson,
     profileEvents,
-    selectedRelayListAtom,
+    masterRelayList,
     selectedAccountAtom
 } from "~/jotaiAtoms";
 
@@ -20,10 +20,9 @@ import { my_pool } from "~/relays";
 
 export default function NewAccountPublishProfile() {
     const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
     const [profileJson, setProfileJson] = useAtom(EditProfileJson);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
-
+    const [relayObj, setRealyObj] = useAtom(masterRelayList);
     // Publish the Profile Event to the Relays
     // Publish the NIP-65 Event to the Relays
     const [appPage, setAppPage] = useAtom(appPageAtom);
@@ -35,12 +34,15 @@ export default function NewAccountPublishProfile() {
     };
     const Publish = async () => {
         let nip65_tags = [];
-        for (const relay of selectedRelays) {
+        for (const relay of relayObj.relay_url_list["default"].urls) {
             nip65_tags.push(["r", relay]);
         }
         let unix_time = Math.floor((new Date()).getTime() / 1000);
+        console.log("LOOKING_AT_ACCOUNTS")
         console.log(accounts)
-        const signer = new NSecSigner(accounts[selectedAccount].secret_key);
+        console.log(selectedAccount)
+        console.log(accounts[selectedAccount])
+        const signer = new NSecSigner(accounts[selectedAccount].privkey);
         const profileEvent = await signer.signEvent({ 
             kind: 0, 
             content: JSON.stringify(profileJson),
@@ -55,8 +57,9 @@ export default function NewAccountPublishProfile() {
         });
         console.log(profileEvent);
         console.log(nip65Event);
-        my_pool.event(profileEvent)
-        my_pool.event(nip65Event)
+        my_pool.event(profileEvent, {relays: selectedRelays})
+        my_pool.event(nip65Event, {relays: selectedRelays})
+        console.log("SHOULD_HAVE_PUBLISHED_PROFILE")
     };
     return (
         <>

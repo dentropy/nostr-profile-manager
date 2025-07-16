@@ -14,7 +14,7 @@ rxNostr.setDefaultRelays(DEFAULT_USERMETA_RELAYS);
 import { useAtom } from "jotai";
 import { profileEvents } from "~/jotaiAtoms";
 import { accountsAtom } from "~/jotaiAtoms";
-import { appPageAtom, NIP33Data } from "~/jotaiAtoms";
+import { appPageAtom } from "~/jotaiAtoms";
 import { PageSelect } from "~/PageSelect";
 
 function findFirstMatch(string_list: String[], target: String) {
@@ -32,7 +32,6 @@ export function Welcome() {
   const [accounts, setAccounts] = useAtom(accountsAtom);
   const [profileData, setProfileData] = useAtom(profileEvents);
   const [appPage, setAppPage] = useAtom(appPageAtom);
-  const [nip33Data, setNIP33Data] = useAtom(NIP33Data);
 
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   return (

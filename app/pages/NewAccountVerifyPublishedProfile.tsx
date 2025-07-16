@@ -8,7 +8,6 @@ import {
     EditProfileJson,
     masterRelayList,
     profileEvents,
-    selectedRelayListAtom,
     selectedAccountAtom
 } from "~/jotaiAtoms";
 
@@ -23,7 +22,6 @@ import { NPool, NRelay1 } from "@nostrify/nostrify";
 import hljs from 'highlight.js';
 import 'highlight.js/styles/default.css';
 
-import wordwrap from 'wordwrapjs'
 
 import { CodeBlock } from "~/components/CodeBlock";
 export default function NewAccountVerifyPublishedProfile() {
@@ -31,11 +29,9 @@ export default function NewAccountVerifyPublishedProfile() {
     const [editEventId, setEventId] = useAtom(editProfileEventId);
     const [profiles, setProfiles] = useAtom(profileEvents);
     const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [selectedRelays, setSelectedRelays] = useAtom(selectedRelayListAtom);
     const [profileJson, setProfileJson] = useAtom(EditProfileJson);
-    const [theRelayList, setTheRelayList] = useAtom(masterRelayList);
+    const [relayObj, setRealyObj] = useAtom(masterRelayList);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
-
     const [events, setEvents] = React.useState({});
     // hljs.registerLanguage('javascript', javascript);
     // const highlightedCode = hljs.highlight(JSON.stringify(events, null, 2), { language: 'javascript' }).value
@@ -51,7 +47,7 @@ export default function NewAccountVerifyPublishedProfile() {
         // console.log("the_filter");
         // console.log(the_filter)
         let theEventsObj = {}
-        for (const tmp_relay_url of theRelayList.relays.testing) {
+        for (const tmp_relay_url of relayObj.relay_url_list["testing"].urls) {
             const myrelay = new NRelay1(tmp_relay_url);
             console.log(`CheckingRelayNewAccount ${tmp_relay_url}`)
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -166,7 +162,7 @@ export default function NewAccountVerifyPublishedProfile() {
             <h1>Verify Your Nostr Profile Was Published Sucessfully</h1>
 
             <SyntaxHighlighter language="json" style={docco}>
-                {JSON.stringify(theRelayList.relays.testing, null, 2)}
+                {JSON.stringify(relayObj, null, 2)}
             </SyntaxHighlighter>
 
 

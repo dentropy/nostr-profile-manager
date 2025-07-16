@@ -13,7 +13,11 @@ export const accountsAtom = atomWithStorage("accountsAtom", {}, storage);
 export const profileEvents = atomWithStorage("profileEvents", {}, storage);
 
 // export const selectedAccount = atom({});
-export const selectedAccountAtom = atomWithStorage("selectedAccount", undefined, storage);
+export const selectedAccountAtom = atomWithStorage(
+    "selectedAccount",
+    undefined,
+    storage,
+);
 
 // export const editProfileEventId = atom()
 export const editProfileEventId = atomWithStorage(
@@ -24,29 +28,19 @@ export const editProfileEventId = atomWithStorage(
 
 import { DEFAULT_TESTING_RELAYS, DEFAULT_USERMETA_RELAYS } from "./relays";
 export const masterRelayList = atomWithStorage("masterRelayList", {
-    "relays": {
-        "default": DEFAULT_USERMETA_RELAYS,
-        "testing": DEFAULT_TESTING_RELAYS,
+    "relay_url_list": {
+        "default": {
+            urls: DEFAULT_USERMETA_RELAYS,
+        },
+        "testing": {
+            urls: DEFAULT_TESTING_RELAYS,
+        },
     },
 }, storage);
-
-export const relayListAtom = atom(DEFAULT_USERMETA_RELAYS);
-export const selectedRelayListAtom = atom(DEFAULT_USERMETA_RELAYS);
-
-let relays_list: any = {};
-for (const relay of DEFAULT_USERMETA_RELAYS) {
-    relays_list[relay] = { enabled: true };
-}
-export const NIP33Data = atom({
-    events: {},
-    relay_list: relays_list,
-    enabled_relays: DEFAULT_USERMETA_RELAYS,
-});
+export const selectedRelayGroup = atomWithStorage("masterRelayList", "default")
 
 export const ProfileJsonData = atom({
     events: {},
-    relay_list: relays_list,
-    enabled_relays: DEFAULT_USERMETA_RELAYS,
 });
 
 export const EditProfileJson = atom({
