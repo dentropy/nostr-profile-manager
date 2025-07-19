@@ -47,7 +47,7 @@ export function MnemonicModal() {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const addAccount = () => {
-    let secret_key = privateKeyFromSeedWords(rawMnemonic, "", 0)
+    let secret_key = privateKeyFromSeedWords(rawMnemonic, mnemonicPassword, mnemonicIndex)
     let accountsData =
     {
       mnemonic: rawMnemonic,
