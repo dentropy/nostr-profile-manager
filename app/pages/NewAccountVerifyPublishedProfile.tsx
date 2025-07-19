@@ -99,6 +99,8 @@ export default function NewAccountVerifyPublishedProfile() {
     };
 
     React.useEffect(() => {
+        console.log("CHECKING_ACCOUNTS")
+        console.log(accounts)
         checkRelays();
     }, []);
 

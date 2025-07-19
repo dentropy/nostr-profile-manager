@@ -1,14 +1,21 @@
+
+import { useAtom } from "jotai";
+import {
+  accountsAtom, appPageAtom, selectedAccountAtom
+} from "~/jotaiAtoms";
+
+import { privateKeyFromSeedWords, validateWords } from "nostr-tools/nip06";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { index } from "@react-router/dev/routes";
-import { wordlists } from "bip39";
-import * as nip19 from "nostr-tools/nip19";
+import { wordlists, validateMnemonic } from "bip39";
 import * as React from "react";
 import { useState } from "react";
-
+import Input from '@mui/material/Input';
+import { generateSecretKey, getPublicKey, nip19 } from "nostr-tools";
 const style = {
   color: "black",
   position: "absolute",
@@ -27,37 +34,68 @@ const style = {
 };
 
 export function MnemonicModal() {
-  const [open, setOpen] = React.useState(false);
-  const [nsecValid, setNSECValid] = React.useState(true);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const mnemonic_length = 12;
-  const mnemonic_index = Array.from(
-    { length: mnemonic_length },
-    (_, index) => index + 1
-  );
-  const [mnemonic, setMnemonic] = React.useState(
-    Array(mnemonic_length).fill("")
-  );
-  const [mnemonicWordStatus, setMnemonicWordStatus] = React.useState(
-    Array(mnemonic_length).fill(true)
-  );
-  const onMnemonicChange = (index: any, event: any) => {
-    try {
-      const mnemonic_change = [...mnemonic];
-      mnemonic_change[index] = event.target.value;
-      setMnemonic(mnemonic_change);
-      console.log(bip39_english.includes(String(event.target.value)));
-      if (bip39_english.includes(event.target.value)) {
-        const mnemonic_word_status = [...mnemonicWordStatus];
-        mnemonic_word_status[index] = false;
-        setMnemonicWordStatus(mnemonic_word_status);
-      }
-    } catch (error) {
-      setNSECValid(true);
+  const [open, setOpen] = React.useState(false)
+  const [nsecValid, setNSECValid] = React.useState(true)
+  const [rawMnemonic, setRawMnemonic] = React.useState("")
+  const [mnemonicIndex, setMnemonicIndex] = React.useState(0)
+  const [mnemonicPassword, setMnemonicPassword] = React.useState("")
+  const [mnemonicValid, setMnemonicValid] = React.useState(false)
+  const [accounts, setAccounts] = useAtom(accountsAtom)
+  const [appPage, setAppPage] = useAtom(appPageAtom)
+  const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const addAccount = () => {
+    let secret_key = privateKeyFromSeedWords(rawMnemonic, "", 0)
+    let accountsData =
+    {
+      mnemonic: rawMnemonic,
+      nsec: nip19.nsecEncode(secret_key),
+      npub: nip19.npubEncode(getPublicKey(secret_key)),
+      privkey: getPublicKey(secret_key),
+      pubkey: getPublicKey(secret_key),
+      secret_key: secret_key,
     }
-    console.log(event.target.value);
+    console.log("SETTING_MNEMONIC_DATA")
+    console.log(accountsData)
+    setAccounts((prevItems) => ({
+      ...prevItems,
+      [accountsData.pubkey]: accountsData
+    }))
+    setSelectedAccount(accountsData.pubkey)
+    setOpen(false)
+    setAppPage({ page: "New Account Verify Published Profile" });
   };
+
+
+  // const mnemonic_length = 12;
+  // const mnemonic_index = Array.from(
+  //   { length: mnemonic_length },
+  //   (_, index) => index + 1
+  // );
+  // const [mnemonic, setMnemonic] = React.useState(
+  //   Array(mnemonic_length).fill("")
+  // );
+  // const [mnemonicWordStatus, setMnemonicWordStatus] = React.useState(
+  //   Array(mnemonic_length).fill(true)
+  // );
+  // const onMnemonicChange = (index: any, event: any) => {
+  //   try {
+  //     const mnemonic_change = [...mnemonic];
+  //     mnemonic_change[index] = event.target.value;
+  //     setMnemonic(mnemonic_change);
+  //     console.log(bip39_english.includes(String(event.target.value)));
+  //     if (bip39_english.includes(event.target.value)) {
+  //       const mnemonic_word_status = [...mnemonicWordStatus];
+  //       mnemonic_word_status[index] = false;
+  //       setMnemonicWordStatus(mnemonic_word_status);
+  //     }
+  //   } catch (error) {
+  //     setNSECValid(true);
+  //   }
+  //   console.log(event.target.value);
+  // };
   return (
     <div>
       <Button
@@ -73,30 +111,82 @@ export function MnemonicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <p
-            style={{
-              display: "inline-block",
-              margin: 0,
-              verticalAlign: "middle",
-            }}
-          >
-            Your text here:
-          </p>
           <input
             type="text"
             style={{ display: "inline-block", verticalAlign: "middle" }}
           />
-          <p>PAUL _WAS_HERE</p>
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+          >
+            Please Input Your Mnemonic
+          </Typography>
+          <br />
+          <TextField
+            id="raw-mnemonic-input"
+            label="Raw Mnemonic"
+            multiline
+            rows={4}
+            defaultValue="Input Raw Mnemonic Here"
+            variant="standard"
+            onChange={(e) => {
+              console.log(e.target.value)
+              if (validateWords(e.target.value)) {
+                setMnemonicValid(true)
+              } else {
+                setMnemonicValid(false)
+              }
+              setRawMnemonic(e.target.value)
+            }}
+          />
           <br />
           <Typography
             id="modal-modal-title"
             variant="h6"
             component="h2"
           >
-            Text in a modal
+            Mnemonic Index, Leave 0 if you don't know what this is
           </Typography>
           <br />
+          <TextField
+            id="mnemonic-index-input"
+            label="Integer Input"
+            value={mnemonicIndex}
+            onChange={(e) => {
+              console.log(e.target.value)
+              setMnemonicIndex(e.target.value)
+            }}
+            variant="outlined"
+            type="number"
+            placeholder="Enter an integer"
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+            fullWidth
+          />
+          <br />
           <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+          >
+            Mnemonic Password, leave blank for default
+          </Typography>
+          <br />
+          <TextField
+            id="raw-mnemonic-input"
+            label="Mnemonic Password"
+            multiline
+            rows={4}
+            defaultValue=""
+            variant="standard"
+            value={mnemonicPassword}
+            onChange={(e) => {
+              console.log(e.target.value)
+              setMnemonicPassword(e.target.value)
+            }}
+          />
+
+          {/* <Typography
             id="modal-modal-description"
             sx={{ mt: 2 }}
           >
@@ -127,7 +217,27 @@ export function MnemonicModal() {
               />
               {mnemonic_index_num % 2 == 0 ? <br /> : <></>}
             </>
-          ))}
+          ))} */}
+          <br />
+          <Button
+            variant="contained"
+            onClick={addAccount}
+            disabled={!mnemonicValid}
+          >
+            Login via Mnemonic
+          </Button>
+          {!mnemonicValid && (
+            <div>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Mnemonic is Invalid, Pleasy Input it Again
+              </Typography>
+              <br />
+            </div>
+          )}
         </Box>
       </Modal>
     </div>
