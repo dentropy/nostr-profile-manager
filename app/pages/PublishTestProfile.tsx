@@ -57,6 +57,7 @@ export function PublishTestProfile() {
             const nsec = nip19.npubEncode(pubkey);
             const privkey = bytesToHex(secretKey);
             const account_data = {
+                type: "mnemonic",
                 mnemonic: mnemonic,
                 nsec: nsec,
                 npub: npub,

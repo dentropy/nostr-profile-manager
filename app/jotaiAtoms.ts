@@ -7,17 +7,26 @@ export const appPageAtom = atom({ page: "Add Account" });
 const storage = createJSONStorage(() => sessionStorage);
 
 // export const accountsAtom = atom([]);
-export const accountsAtom = atomWithStorage("accountsAtom", {}, storage);
-
-// export const profileEvents = atom({});
-export const profileEvents = atomWithStorage("profileEvents", {}, storage);
+export const accountsAtom = atomWithStorage("accountsAtom", {
+    "template_account": {
+                    mnemonic: "template_account",
+                    nsec: "template_account",
+                    npub: "template_account",
+                    privkey: "template_account",
+                    pubkey: "template_account",
+                }
+}, storage);
 
 // export const selectedAccount = atom({});
 export const selectedAccountAtom = atomWithStorage(
     "selectedAccount",
-    undefined,
+    "template_account",
     storage,
 );
+
+// export const profileEvents = atom({});
+export const profileEvents = atomWithStorage("profileEvents", {}, storage);
+
 
 // export const editProfileEventId = atom()
 export const editProfileEventId = atomWithStorage(

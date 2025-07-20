@@ -14,6 +14,7 @@ import NewAccountVerifyPublishedProfile from "./pages/NewAccountVerifyPublishedP
 import ExistingAccountNSEC from "~/pages/ExistingAccountNSEC";
 import FetchingProfilePage from "./pages/FetchingProfilePage";
 import { PublishTestProfile } from "./pages/PublishTestProfile";
+import { LoginViaExtension } from "./pages/LoginViaExtension";
 
 export function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
@@ -106,6 +107,13 @@ export function PageSelect() {
     return (
       <>
         <PublishTestProfile />
+      </>
+    );
+  }
+  if (appPage.page == "Extension Login") {
+    return (
+      <>
+        <LoginViaExtension />
       </>
     );
   }

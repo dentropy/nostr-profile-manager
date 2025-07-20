@@ -32,6 +32,7 @@ export default function ExistingAccountNSEC() {
     const [nsecValid, setNSECValid] = React.useState(true);
     const [accounts, setAccounts] = useAtom(accountsAtom);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
+    const [appPage, setAppPage] = useAtom(appPageAtom);
     const [nsec, setNSEC] = React.useState("");
     const onNSECChange = (event: any) => {
         try {
@@ -42,7 +43,6 @@ export default function ExistingAccountNSEC() {
         }
         setNSEC(event.target.value);
     };
-    const [appPage, setAppPage] = useAtom(appPageAtom);
     const prevousPage = () => {
         setAppPage({ page: "Add Account" });
     };
@@ -53,6 +53,7 @@ export default function ExistingAccountNSEC() {
         
         let accountsData =
             {
+                type: "nsec",
                 nsec,
                 npub: nip19.npubEncode(getPublicKey(nip19.decode(nsec).data)),
                 privkey: bytesToHex(nip19.decode(nsec).data),

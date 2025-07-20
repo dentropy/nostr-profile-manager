@@ -50,6 +50,7 @@ export function MnemonicModal() {
     let secret_key = privateKeyFromSeedWords(rawMnemonic, mnemonicPassword, mnemonicIndex)
     let accountsData =
     {
+      type: "mnemonic",
       mnemonic: rawMnemonic,
       nsec: nip19.nsecEncode(secret_key),
       npub: nip19.npubEncode(getPublicKey(secret_key)),

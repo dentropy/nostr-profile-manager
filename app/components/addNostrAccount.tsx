@@ -16,6 +16,10 @@ export default function AddNostrAccount() {
   const selectExistingAccountNSEC = () => {
     setAppPage({ page: "Existing Account NSEC" });
   };
+  const selectExtensonLogin = () => {
+    setAppPage({ page: "Extension Login" });
+  };
+
   const PublishTestProfile = () => {
     setAppPage({ page: "Publish Test Profile" });
   };
@@ -44,6 +48,12 @@ export default function AddNostrAccount() {
         Input NSEC, NPUB, or HEX Key
       </Button>
       <MnemonicModal />
+      <Button
+        disabled={!Object.keys(window).includes("nostr")}
+        variant="contained" 
+        onClick={selectExtensonLogin}>
+        Login Via Extension
+      </Button>
       <Typography
         variant="h3"
         style={{ textAlign: "left", display: "flex" }}
