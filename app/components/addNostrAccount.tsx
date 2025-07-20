@@ -4,7 +4,6 @@ import { appPageAtom } from "~/jotaiAtoms";
 import { Box } from "@mui/material";
 import { CreateDevNostrAccount } from "../modals/createDevNostrAccountModal";
 import { MnemonicModal } from "../modals/mnemonicmodal";
-import { NSECModal } from "../modals/nsecmodal";
 import { ToggleRelayList } from "./ToggleRelayList";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -41,7 +40,6 @@ export default function AddNostrAccount() {
       >
         Load an Existing Nostr Profile
       </Typography>
-      {/* <NSECModal /> */}
       <Button variant="contained" onClick={selectExistingAccountNSEC}>
         Input NSEC, NPUB, or HEX Key
       </Button>
