@@ -131,8 +131,8 @@ export function PublishTestProfile() {
         console.log("Here are our events");
         console.log(profileEvent);
         console.log(nip65Event);
-        my_pool.event(profileEvent, { relays: DEFAULT_TESTING_RELAYS });
-        my_pool.event(nip65Event, { relays: DEFAULT_TESTING_RELAYS });
+        my_pool.event(profileEvent, { relays: relayObj.relay_url_list[relayGroup].urls });
+        my_pool.event(nip65Event, { relays: relayObj.relay_url_list[relayGroup].urls });
     }
 
     const nextPage = () => {
