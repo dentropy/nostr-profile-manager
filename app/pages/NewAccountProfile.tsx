@@ -20,7 +20,7 @@ import { Button } from "@mui/material";
 export default function NewAccountProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
     const prevousPage = () => {
-        setAppPage({ page: "New Account Keys" });
+        setAppPage({ page: "Add Account" });
     };
     const nextPage = () => {
         setAppPage({ page: "New Account Verify Published Profile" });
@@ -59,7 +59,7 @@ export default function NewAccountProfile() {
         <>
             <EditNostrProfile></EditNostrProfile>
             <Button variant="contained" onClick={prevousPage}>
-                Previouis: New Account Keys
+                Previouis: Add Account
             </Button>
             <Button variant="contained" onClick={nextPage}>
                 Next: Verify Published Profile

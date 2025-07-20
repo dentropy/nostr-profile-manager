@@ -110,7 +110,12 @@ export function PublishTestProfile() {
             nip65_tags.push(["r", relay]);
         }
         let unix_time = Math.floor((new Date()).getTime() / 1000);
-        const signer = new NSecSigner(accounts[selectedAccount].privkey);
+        let signer = undefined
+        if(accounts[selectedAccount].type == "nip-07") {
+            signer = window.nostr
+        } else {
+            signer = new NSecSigner(accounts[selectedAccount].privkey)
+        }
         const profileEvent = await signer.signEvent({
             kind: 0,
             content: JSON.stringify(profileJsonData),

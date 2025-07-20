@@ -26,9 +26,9 @@ export default function NewAccountVerifyPublishedProfile() {
     const [appPage, setAppPage] = useAtom(appPageAtom)
     const [editEventId, setEventId] = useAtom(editProfileEventId)
     const [profiles, setProfiles] = useAtom(profileEvents)
-    const [accounts, setAccounts] = useAtom(accountsAtom)
     const [profileJson, setProfileJson] = useAtom(EditProfileJson)
     const [relayObj, setRealyObj] = useAtom(masterRelayList)
+    const [accounts, setAccounts] = useAtom(accountsAtom)
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom)
     const [events, setEvents] = useAtom(profileEvents)// React.useState({});
 

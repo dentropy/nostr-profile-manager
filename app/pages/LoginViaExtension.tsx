@@ -14,8 +14,16 @@ export function LoginViaExtension() {
     const [accounts, setAccounts] = useAtom(accountsAtom);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
     const [appPage, setAppPage] = useAtom(appPageAtom);
+
+    const prevousPage = () => {
+        setAppPage({ page: "New Account Keys" });
+    };
+    const nextPage = () => {
+        setAppPage({ page: "New Account Verify Published Profile" });
+    }
+
     React.useEffect(() => {
-        async function getExtensionData(){
+        async function getExtensionData() {
             let pubkey = await window.nostr.getPublicKey()
             console.log("WE_GOT_A_PUBKEY")
             console.log(pubkey)
@@ -28,11 +36,11 @@ export function LoginViaExtension() {
                 privkey: "Check NIP-07 Extension",
                 pubkey: pubkey,
             }
-        setAccounts((prevItems) => ({
-            ...prevItems,
-            [accountsData.pubkey]: accountsData
-        }))
-        setSelectedAccount(accountsData.pubkey)
+            setAccounts((prevItems) => ({
+                ...prevItems,
+                [accountsData.pubkey]: accountsData
+            }))
+            setSelectedAccount(accountsData.pubkey)
         }
         getExtensionData()
     }, [])
@@ -51,6 +59,12 @@ export function LoginViaExtension() {
                 npub={accounts[selectedAccount].npub}
                 nsec={accounts[selectedAccount].nsec}
             ></NostrAccountData>
+            <Button variant="contained" onClick={prevousPage}>
+                Previouis: New Account Keys
+            </Button>
+            <Button variant="contained" onClick={nextPage}>
+                Next: Verify Published Profile
+            </Button>
 
         </>
 
