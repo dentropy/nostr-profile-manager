@@ -24,6 +24,10 @@ export default function AddNostrAccount() {
     setAppPage({ page: "Publish Test Profile" });
   };
 
+  const ClaimNIP05 = () => {
+    setAppPage({ page: "Claim Your NIP05" });
+  };
+
   return (
     <>
       <Typography
@@ -53,6 +57,18 @@ export default function AddNostrAccount() {
         variant="contained" 
         onClick={selectExtensonLogin}>
         Login Via Extension
+      </Button>
+      <Typography
+        variant="h3"
+        style={{ textAlign: "left", display: "flex" }}
+      >
+        Claim Your NIP05
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={ClaimNIP05}
+      >
+        Claim Your NIP05
       </Button>
       <Typography
         variant="h3"

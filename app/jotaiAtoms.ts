@@ -46,7 +46,7 @@ export const masterRelayList = atomWithStorage("masterRelayList", {
         },
     },
 }, storage);
-export const selectedRelayGroup = atomWithStorage("masterRelayList", "default")
+export const selectedRelayGroup = atomWithStorage("selectedRelayGroup", "default")
 
 export const ProfileJsonData = atom({
     events: {},
@@ -63,3 +63,6 @@ export const EditProfileJson = atom({
 });
 
 export const relayWebSocketsAtom = atom({});
+
+export const NIP05BotRelay = atom("wss://t.mememap.net")
+export const NIP05BotNPUB = atom("npub16df9jyzu7yt7pct5cn2qwll5nl54yrmes5vqr4e2shqtxnzk6mlsded3vk");
