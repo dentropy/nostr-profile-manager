@@ -12,8 +12,8 @@ import { NRelay1 } from "@nostrify/nostrify";
 export default function FetchingProfilePage() {
     const [appPage, setAppPage] = useAtom(appPageAtom);
     const [accounts, setAccounts] = useAtom(accountsAtom);
-    const [events, setEvents] = React.useState({});
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
+    const [events, setEvents] = React.useState({});
     const [relayObj, setRealyObj] = useAtom(masterRelayList)
     const [profileJson, setProfileJson] = useAtom(EditProfileJson)
     const prevousPage = () => {
