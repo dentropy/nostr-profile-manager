@@ -13,6 +13,9 @@ export default function AddNostrAccount() {
   const selectNewAccount = () => {
     setAppPage({ page: "New Account Keys" });
   };
+  const claimNIP05 = () => {
+    setAppPage({ page: "Claim NIP05" });
+  };
   const selectExistingAccountNSEC = () => {
     setAppPage({ page: "Existing Account NSEC" });
   };
@@ -41,6 +44,18 @@ export default function AddNostrAccount() {
         onClick={selectNewAccount}
       >
         Create a New Account
+      </Button>
+      <Typography
+        variant="h3"
+        style={{ textAlign: "left", display: "flex" }}
+      >
+        Claim NIP05
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={claimNIP05}
+      >
+        Claim NIP05
       </Button>
       <Typography
         variant="h3"

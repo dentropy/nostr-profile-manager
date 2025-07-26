@@ -16,7 +16,6 @@ import FetchingProfilePage from "./pages/FetchingProfilePage";
 import { PublishTestProfile } from "./pages/PublishTestProfile";
 import { LoginViaExtension } from "./pages/LoginViaExtension";
 import ClaimNIP05 from "./pages/ClaimNIP05";
-
 export function PageSelect() {
   const [appPage, setAppPage] = useAtom(appPageAtom);
   if (appPage.page == "Add Account") {
@@ -118,7 +117,7 @@ export function PageSelect() {
       </>
     );
   }
-  if (appPage.page == "Claim Your NIP05") {
+  if (appPage.page == "Claim NIP05") {
     return (
       <>
         <ClaimNIP05 />

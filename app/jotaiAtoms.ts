@@ -46,7 +46,7 @@ export const masterRelayList = atomWithStorage("masterRelayList", {
         },
     },
 }, storage);
-export const selectedRelayGroup = atomWithStorage("selectedRelayGroup", "default")
+export const selectedRelayGroup = atomWithStorage("masterRelayList", "default")
 
 export const ProfileJsonData = atom({
     events: {},
@@ -64,5 +64,11 @@ export const EditProfileJson = atom({
 
 export const relayWebSocketsAtom = atom({});
 
-export const NIP05BotRelay = atom("wss://t.mememap.net")
-export const NIP05BotNPUB = atom("npub16df9jyzu7yt7pct5cn2qwll5nl54yrmes5vqr4e2shqtxnzk6mlsded3vk");
+export const nip05Atom = atom({
+    "tld": "test.local",
+    "relay_urls": ["ws://mydesktop:3334"],
+    "bot_npub": "npub1ptnjph53ql960dsyqrzl4x9wcn6jnqcfhdwwjt2yszh02kf4emmsutgea7",
+    "url_schema": "http",
+    "port": 8080
+
+})
