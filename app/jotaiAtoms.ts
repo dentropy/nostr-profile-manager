@@ -65,10 +65,10 @@ export const EditProfileJson = atom({
 export const relayWebSocketsAtom = atom({});
 
 export const nip05Atom = atom({
-    "tld": "test.local",
-    "relay_urls": ["ws://mydesktop:3334"],
-    "bot_npub": "npub1ptnjph53ql960dsyqrzl4x9wcn6jnqcfhdwwjt2yszh02kf4emmsutgea7",
-    "url_schema": "http",
-    "port": 8080
+    "tld": "free.mememaps.net",
+    "relay_urls": ["wss://t.mememap.net"],
+    "bot_npub": "npub1kscur2mm7g5aj8v6lj7kav8s0467j3sf84ufzyqd6fcx6caxaycqugkld7",
+    "url_schema": "https",
+    "port": 443
 
 })
