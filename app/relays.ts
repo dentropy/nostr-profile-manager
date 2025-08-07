@@ -1,35 +1,35 @@
 export const DEFAULT_USERMETA_RELAYS = [
-  "ws://ditto.local/relay",
-  "ws://khatru.local",
-  "ws://piprelay.local",
-  "ws://sqlitenode.local",
-  "ws://rsrelay.local",
-  "ws://strfry.local/"
-  // "wss://purplepag.es",
-  // "wss://user.kindpag.es",
-  // "wss://relay.nostr.band",
-  // "wss://relay.damus.io",
-  // "wss://nos.lol",
-  // "wss://relay.primal.net",
+  // "ws://ditto.local/relay",
+  // "ws://khatru.local",
+  // "ws://piprelay.local",
+  // "ws://sqlitenode.local",
+  // "ws://rsrelay.local",
+  // "ws://strfry.local/"
   // "wss://t.mememap.net",
-  // "wss://relay.mememaps.net",
+  "wss://purplepag.es",
+  "wss://user.kindpag.es",
+  "wss://relay.nostr.band",
+  "wss://relay.damus.io",
+  "wss://nos.lol",
+  "wss://relay.primal.net",
+  "wss://relay.mememaps.net",
 ];
 
 export const DEFAULT_TESTING_RELAYS = [
-  "ws://ditto.local/relay",
-  "ws://khatru.local",
-  "ws://piprelay.local",
-  "ws://sqlitenode.local",
-  "ws://rsrelay.local",
-  "ws://strfry.local/"
+  // "ws://ditto.local/relay",
+  // "ws://khatru.local",
+  // "ws://piprelay.local",
+  // "ws://sqlitenode.local",
+  // "ws://rsrelay.local",
+  // "ws://strfry.local/"
   // "wss://purplepag.es",
   // "wss://user.kindpag.es",
   // "wss://relay.nostr.band",
   // "wss://relay.damus.io",
   // "wss://nos.lol",
   // "wss://relay.primal.net",
-  // "wss://t.mememap.net"
   // "wss://relay.mememaps.net",
+  "wss://t.mememap.net",
 ];
 
 import { NPool, NRelay1 } from "@nostrify/nostrify";

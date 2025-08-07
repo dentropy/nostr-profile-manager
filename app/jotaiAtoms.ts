@@ -66,9 +66,11 @@ export const relayWebSocketsAtom = atom({});
 
 export const nip05Atom = atom({
     "tld": "free.mememaps.net",
-    "relay_urls": ["wss://t.mememap.net"],
-    "bot_npub": "npub1kscur2mm7g5aj8v6lj7kav8s0467j3sf84ufzyqd6fcx6caxaycqugkld7",
+    "relay_urls": ["wss://relay.mememaps.net"],
+    "bot_npub": "npub1txuw68h60ywhqvkf0dgktml6tnsr4ns4454nzjp40z4sh8k278hs0jqu50",
     "url_schema": "https",
     "port": 443
-
 })
+export const NIP05BotRelay = atom("wss://relay.mememaps.net")
+export const NIP05BotNPUB = atom("npub1txuw68h60ywhqvkf0dgktml6tnsr4ns4454nzjp40z4sh8k278hs0jqu50");
+export const NIP05TLD = atom("free.mememaps.net")

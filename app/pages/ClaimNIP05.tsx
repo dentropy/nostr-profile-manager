@@ -1,5 +1,11 @@
 import { useAtom } from "jotai";
-import { nip05Atom } from "~/jotaiAtoms";
+import {
+    accountsAtom,
+    appPageAtom,
+    profileEvents,
+    selectedAccountAtom,
+    nip05Atom
+} from "~/jotaiAtoms";
 
 import EditNostrProfile from "~/components/EditNostrProfile";
 import { Button } from "@mui/material";
@@ -11,7 +17,7 @@ import Typography from "@mui/material/Typography";
 import { alignProperty } from "node_modules/@mui/material/esm/styles/cssUtils";
 import React from "react";
 
-import LinkIcon from '@mui/icons-material/Link';
+import LinkIcon from "@mui/icons-material/Link";
 
 import { ToggleRelayList } from "../components/ToggleRelayList";
 import {
@@ -25,26 +31,41 @@ import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { JsonEditor } from "json-edit-react";
 import { rxNostr } from "~/index";
 import { seckeySigner, verifier } from "@rx-nostr/crypto";
-import {
-    accountsAtom,
-    appPageAtom,
-    editProfileEventId,
-    profileEvents,
-    selectedAccountAtom,
-} from "~/jotaiAtoms";
 import { my_pool } from "~/relays";
 import { NSecSigner } from "@nostrify/nostrify";
+import NostrAccountData from "~/components/NostrAccountData";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 export default function ClaimNIP05() {
-    const [username, setUsername] = React.useState("");
     const [validUsername, setValidUsername] = React.useState(false);
     const [foundUsername, setFoundUsername] = React.useState(false);
-    const [enableLinkToWellKnown, setEnableLinkToWellKnown] = React.useState(false);
+    const [enableLinkToWellKnown, setEnableLinkToWellKnown] = React.useState(
+        false,
+    );
 
     const [nip05Data, setNIP05Data] = useAtom(nip05Atom);
     const [appPage, setAppPage] = useAtom(appPageAtom);
+    const [nip05Username, setNip05Username] = React.useState("");
+    const [nip05UsernameValidity, setNip05UsernameValidity] = React.useState(
+        true,
+    );
+    const hasRun = React.useRef(false);
+    // const tmpRelay = new NRelay1(nip05Relay)
+    const checkNIP05Claimed = () => {
+        console.log("checkNIP05Claimed");
+    };
+    const selectNewAccount = () => {
+        setAppPage({ page: "New Account Profile" });
+    };
+    const [profiles, setProfiles] = useAtom(profileEvents);
+
     const [accounts, setAccounts] = useAtom(accountsAtom);
     const [selectedAccount, setSelectedAccount] = useAtom(selectedAccountAtom);
+
+    const [age, setAge] = React.useState(nip05Data.tld);
+    const handleChange = (event) => {
+        setAge(event.target.value as string);
+    };
 
     async function claimNIP05() {
         let signer = undefined;
@@ -61,7 +82,7 @@ export default function ClaimNIP05() {
                 ["L", "nip05.domain"],
                 ["l", nip05Data.tld.toLowerCase(), "nip05.domain"],
                 ["p", accounts[selectedAccount].pubkey],
-                ["d", username.toLowerCase()],
+                ["d", nip05Username.toLowerCase()],
             ],
             created_at: unix_time,
         });
@@ -79,7 +100,7 @@ export default function ClaimNIP05() {
         const the_filter = {
             kinds: [30360],
             authors: [nip19.decode(nip05Data.bot_npub).data],
-            "#d": [username],
+            "#d": [nip05Username],
         };
         console.log("THE_FILTER", the_filter);
         let found_username = true;
@@ -108,29 +129,46 @@ export default function ClaimNIP05() {
             >
                 Claim Your NIP05
             </Typography>
-            <br />
-            <TextField
-                id="raw-mnemonic-input"
-                label="Raw Mnemonic"
-                multiline
-                rows={1}
-                defaultValue={username}
-                variant="standard"
-                onChange={(e) => {
-                    console.log(e.target.value);
-                    const newVal = e.target.value.toLocaleLowerCase();
-                    checkValidUsername(newVal);
-                    setUsername(newVal);
-                    setFoundUsername(false);
-                }}
+            <NostrAccountData
+                mnemonic={accounts[selectedAccount].mnemonic}
+                pubkey={accounts[selectedAccount].pubkey}
+                privkey={accounts[selectedAccount].privkey}
+                npub={accounts[selectedAccount].npub}
+                nsec={accounts[selectedAccount].nsec}
             />
-            <Typography
-                variant="body1"
-                style={{ textAlign: "left", display: "flex" }}
-            >
-                Your NIP05 will be: {username}@{nip05Data.tld} <br></br>
-                {JSON.stringify(foundUsername)}
-            </Typography>
+            <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                <TextField
+                    id="nip05Username"
+                    label="nip05Username"
+                    multiline
+                    rows={1}
+                    defaultValue=""
+                    variant="standard"
+                    value={nip05Username}
+                    onChange={(e) => {
+                        console.log(e.target.value);
+                        setNip05Username(e.target.value);
+                        if(checkValidUsername(e.target.value)) {
+                            setNip05UsernameValidity(false)
+                        } else {
+                            setNip05UsernameValidity(true)
+                        }
+                    }}
+                />@<FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={age}
+                        label="Age"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={nip05Data.tld}>
+                            {nip05Data.tld}
+                        </MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
             <Button
                 variant="contained"
                 onClick={checkNIP05Exists}
@@ -151,11 +189,11 @@ export default function ClaimNIP05() {
                     <Button
                         variant="contained"
                         color="primary"
-                        href={`${nip05Data.url_schema}://${nip05Data.tld}:${nip05Data.port}/.well-known/nostr.json?name=${username.toLocaleLowerCase()}`}
+                        href={`${nip05Data.url_schema}://${nip05Data.tld}:${nip05Data.port}/.well-known/nostr.json?name=${nip05Username.toLocaleLowerCase()}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<LinkIcon />}
-                        sx={{ textTransform: 'none' }}
+                        sx={{ textTransform: "none" }}
                     >
                         Visit {nip05Data.tld} and verify your NIP05 is set
                     </Button>

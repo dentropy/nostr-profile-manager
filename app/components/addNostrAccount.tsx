@@ -28,7 +28,7 @@ export default function AddNostrAccount() {
   };
 
   const ClaimNIP05 = () => {
-    setAppPage({ page: "Claim Your NIP05" });
+    setAppPage({ page: "Claim NIP05" });
   };
 
   return (
