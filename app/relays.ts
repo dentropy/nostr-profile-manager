@@ -29,7 +29,8 @@ export const DEFAULT_TESTING_RELAYS = [
   // "wss://nos.lol",
   // "wss://relay.primal.net",
   // "wss://relay.mememaps.net",
-  "wss://t.mememap.net",
+  // "wss://t.mememap.net",
+  "ws://localhost:9090"
 ];
 
 import { NPool, NRelay1 } from "@nostrify/nostrify";
